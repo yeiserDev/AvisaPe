@@ -1,0 +1,35 @@
+{
+  "name": "avisape",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "icons": "node scripts/generate-icons.mjs",
+    "vapid": "node scripts/generate-vapid.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.47.10",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "lucide-react": "^0.468.0",
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@types/web-push": "^3.6.4",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.3"
+  }
+}

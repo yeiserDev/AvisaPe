@@ -1,0 +1,58 @@
+import type { Metadata, Viewport } from "next";
+import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import "./globals.css";
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const instrument = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-instrument",
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "AvisaPe",
+  description: "Tus pendientes en un riel de tiempo, con aviso en la pantalla de bloqueo.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "AvisaPe",
+    // La app es clara: la barra de estado necesita texto oscuro.
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  formatDetection: { telephone: false, date: false, address: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#e6e2f0",
+  width: "device-width",
+  initialScale: 1,
+  // Evita el zoom al enfocar inputs en iOS sin bloquear el zoom manual.
+  maximumScale: 5,
+  viewportFit: "cover",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="es"
+      className={`${bricolage.variable} ${instrument.variable} ${jetbrains.variable}`}
+    >
+      <body className="min-h-dvh antialiased">{children}</body>
+    </html>
+  );
+}

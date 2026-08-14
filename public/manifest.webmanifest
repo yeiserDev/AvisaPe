@@ -1,0 +1,42 @@
+{
+  "name": "AvisaPe",
+  "short_name": "AvisaPe",
+  "description": "Tus pendientes en un riel de tiempo, con aviso en la pantalla de bloqueo.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#e6e2f0",
+  "theme_color": "#e6e2f0",
+  "lang": "es-PE",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agregar pendiente",
+      "short_name": "Agregar",
+      "url": "/?nuevo=1",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
