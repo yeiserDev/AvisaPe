@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Clock3, Repeat2, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
 import type { Task } from "@/lib/types";
 import { faltan, hora, urgencia, type Urgencia } from "@/lib/time";
 
@@ -33,7 +34,13 @@ export default function NodoPendiente({
   const u = urgencia(due, now);
 
   return (
-    <li className="entrada">
+    <motion.li
+      layout
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+    >
       <div
         className={`flex items-start gap-3 rounded-tarjeta p-3.5 transition-colors ${
           hecho
@@ -129,6 +136,6 @@ export default function NodoPendiente({
           </button>
         </div>
       </div>
-    </li>
+    </motion.li>
   );
 }

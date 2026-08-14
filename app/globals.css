@@ -163,6 +163,22 @@ body::before {
   filter: brightness(1.07) saturate(1.05);
 }
 
+/* ── Hero Card ────────────────────────────────────────────────
+   Fondo complejo de la tarjeta principal, simulando 3D Liquid Glass
+   con esferas subyacentes mediante gradientes radiales.
+   ────────────────────────────────────────────────────────────── */
+.hero-card {
+  background-color: #6b5795;
+  background-image: 
+    radial-gradient(circle at 75% 130%, #7d6ba8 0%, #5d4a86 45%, transparent 45.2%),
+    radial-gradient(circle at 105% 85%, #7663a2 0%, #55437e 30%, transparent 30.2%);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+    0 12px 30px -10px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
 /* Sin soporte de desenfoque, el vidrio se vuelve opaco en vez de ilegible. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .vidrio,
@@ -235,13 +251,7 @@ body::before {
   animation: pulso 2.4s ease-in-out infinite;
 }
 
-@keyframes entrada {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-.entrada {
-  animation: entrada 0.3s cubic-bezier(0.2, 0.8, 0.3, 1) both;
-}
+/* Eliminado: @keyframes entrada y .entrada se gestionan con framer-motion */
 
 /* Medianoche lila: el mismo fondo que las imágenes de arranque de iOS, para
    que el paso del splash del sistema a la app no se note. */

@@ -5,6 +5,8 @@ build/
 .env
 .env.local
 .env*.local
+# Versiones de las migraciones con secretos ya reemplazados.
+*.local.sql
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store

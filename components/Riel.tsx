@@ -1,7 +1,8 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, LogOut } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, LogOut, Utensils, Briefcase, HeartPulse, Wallet, Bell, User, Clock, CheckSquare, ListTodo, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { TIPO_POR_DEFECTO, type NewTask, type Task } from "@/lib/types";
 import {
@@ -15,6 +16,7 @@ import AvisosGate from "./AvisosGate";
 import Composer from "./Composer";
 import HojaDetalle from "./HojaDetalle";
 import NodoPendiente from "./NodoPendiente";
+import LoaderGlobal from "./LoaderGlobal";
 
 type Grupo = { clave: string; etiqueta: string; fecha: Date; items: Task[] };
 /** "todo" o el nombre de un tipo. */
@@ -26,6 +28,7 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
   const [now, setNow] = useState(() => new Date());
   const [filtro, setFiltro] = useState<Filtro>("todo");
   const [hoja, setHoja] = useState<{ task: Task | null; titulo: string } | null>(null);
+  const [cargando, setCargando] = useState(false);
   const paramsProcesados = useRef(false);
 
   // El riel es un reloj: sin este latido las cuentas regresivas mienten.
@@ -76,15 +79,20 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
 
   const crear = useCallback(
     async (datos: NewTask) => {
-      const { data: sesion } = await supabase.auth.getUser();
-      if (!sesion.user) throw new Error("Se cerró la sesión. Vuelve a entrar.");
+      setCargando(true);
+      try {
+        const { data: sesion } = await supabase.auth.getUser();
+        if (!sesion.user) throw new Error("Se cerró la sesión. Vuelve a entrar.");
 
-      const { error } = await supabase.from("tasks").insert({
-        ...datos,
-        user_id: sesion.user.id,
-      });
-      if (error) throw new Error(error.message);
-      await recargar();
+        const { error } = await supabase.from("tasks").insert({
+          ...datos,
+          user_id: sesion.user.id,
+        });
+        if (error) throw new Error(error.message);
+        await recargar();
+      } finally {
+        setCargando(false);
+      }
     },
     [supabase, recargar],
   );
@@ -240,36 +248,80 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
       <div className="mx-auto max-w-2xl pb-36">
         {/* ── Bloque protagonista ── */}
         <header className="safe-top px-3">
-          <div className="vidrio-tinte rounded-bloque px-6 pb-7 pt-5 text-white">
+          <div className="hero-card rounded-[2rem] px-6 pb-7 pt-6 text-white">
             <div className="flex items-center justify-between">
-              <span className="rounded-full bg-white/20 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] backdrop-blur-sm">
+              <span className="rounded-full bg-white/10 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
                 AvisaPe
               </span>
-              <form action="/auth/salir" method="post">
+              <form action="/auth/salir" method="post" className="relative z-20">
                 <button
                   type="submit"
                   title={`Salir de ${email}`}
                   aria-label={`Salir de ${email}`}
-                  className="vidrio-toque grid size-9 place-items-center rounded-full bg-white/20 backdrop-blur-sm transition-colors hover:bg-white/30"
+                  className="grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                 >
-                  <LogOut className="size-4" />
+                  <LogOut className="size-[18px] text-white/80" />
                 </button>
               </form>
             </div>
 
-            <h1 className="mt-7 font-display text-[2.4rem] font-bold leading-[1.02] tracking-tight">
-              {titular}
-            </h1>
-            <p className="mt-2 line-clamp-2 text-[15px] leading-snug text-white/80">
-              {subtitular}
-            </p>
+            {/* Calendario 3D CSS puro */}
+            <div className="absolute -right-2 top-16 w-44 h-44 select-none pointer-events-none drop-shadow-2xl">
+              <div className="absolute top-2 left-6 text-white/90 text-xl animate-pulse">✨</div>
+              <div className="absolute top-8 right-6 text-white/70 text-sm animate-pulse" style={{ animationDelay: '0.5s' }}>✨</div>
+              
+              {/* Cuerpo del calendario */}
+              <div className="absolute inset-5 rounded-3xl bg-gradient-to-br from-[#b39deb] to-[#866cd4] shadow-[inset_0_5px_15px_rgba(255,255,255,0.5),0_15px_25px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden border border-white/30">
+                <div className="h-11 bg-gradient-to-b from-white/30 to-white/5 border-b border-white/20 shadow-sm relative">
+                  <div className="absolute -top-2 left-6 w-3 h-8 rounded-full bg-gradient-to-b from-[#ffffff] to-[#c0b5de] shadow-md border border-white/80 z-10"></div>
+                  <div className="absolute -top-2 right-6 w-3 h-8 rounded-full bg-gradient-to-b from-[#ffffff] to-[#c0b5de] shadow-md border border-white/80 z-10"></div>
+                </div>
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="w-16 h-2 bg-white/20 rounded-full shadow-inner mt-4"></div>
+                </div>
+              </div>
+              
+              {/* Checkmark 3D */}
+              <div className="absolute bottom-2 right-2 size-14 rounded-full bg-gradient-to-br from-[#dcd1fa] to-[#a28af0] shadow-[inset_0_3px_8px_rgba(255,255,255,0.9),0_10px_20px_rgba(0,0,0,0.4)] flex items-center justify-center border-[1.5px] border-white/50">
+                <Check className="size-7 text-white drop-shadow-md" strokeWidth={4} />
+              </div>
+            </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              <span className="rounded-full bg-white/15 px-3 py-1.5 text-[12px] font-medium backdrop-blur-sm">
+            <div className="relative z-10 mt-11 w-[70%]">
+              <p className="font-display text-xl font-bold tracking-tight text-white/95">
+                {proximo ? "Lo próximo, en" : vencidos.length ? "Tienes tareas atrasadas" : "Todo listo para hoy"}
+              </p>
+              <h1 className="mt-1 font-display text-[3.2rem] font-bold leading-none tracking-tight">
+                {proximo ? faltan(new Date(proximo.due_at), now).replace("en ", "") : vencidos.length ? `${vencidos.length}` : "—"}
+              </h1>
+              
+              <div className="mt-4 flex items-center gap-2.5 text-[16px] font-medium text-white/80">
+                {proximo ? (
+                  <>
+                    <IconoParaTipo tipo={proximo.kind} />
+                    <span className="truncate">{proximo.title}</span>
+                  </>
+                ) : vencidos.length ? (
+                  <>
+                    <Bell className="size-5" />
+                    <span className="truncate">{vencidos[0].title}</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckSquare className="size-5" />
+                    <span>Buen trabajo</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-10 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4a3b72] px-4 py-2 text-[13px] font-semibold text-white/90 shadow-sm border border-white/5">
+                <Clock className="size-4 opacity-70" />
                 {hoyTotal} {hoyTotal === 1 ? "pendiente hoy" : "pendientes hoy"}
               </span>
               {vencidos.length > 0 && (
-                <span className="rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-alerta">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[13px] font-bold text-[#eb4559] shadow-sm">
                   {vencidos.length} sin cerrar
                 </span>
               )}
@@ -328,28 +380,33 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
                 </span>
               </div>
 
-              <ul className="flex flex-col gap-2">
-                {grupo.items.map((task, i) => (
-                  <Fragment key={task.id}>
-                    {grupo.clave === claveHoy && debeIrLineaAntes(grupo.items, i, now) && (
-                      <LineaDeAhora now={now} />
-                    )}
-                    <NodoPendiente
-                      task={task}
-                      now={now}
-                      onListo={alternarListo}
-                      onPosponer={posponer}
-                      onBorrar={borrar}
-                      onAbrir={(t) => setHoja({ task: t, titulo: "" })}
-                    />
-                  </Fragment>
-                ))}
+              <motion.ul layout className="flex flex-col gap-2">
+                <AnimatePresence initial={false}>
+                  {grupo.items.map((task, i) => {
+                    const nodos = [];
+                    if (grupo.clave === claveHoy && debeIrLineaAntes(grupo.items, i, now)) {
+                      nodos.push(<LineaDeAhora now={now} key={`linea-${task.id}`} />);
+                    }
+                    nodos.push(
+                      <NodoPendiente
+                        key={task.id}
+                        task={task}
+                        now={now}
+                        onListo={alternarListo}
+                        onPosponer={posponer}
+                        onBorrar={borrar}
+                        onAbrir={(t) => setHoja({ task: t, titulo: "" })}
+                      />
+                    );
+                    return nodos;
+                  })}
 
-                {grupo.clave === claveHoy &&
-                  grupo.items.every((t) => new Date(t.due_at) < now) && (
-                    <LineaDeAhora now={now} />
-                  )}
-              </ul>
+                  {grupo.clave === claveHoy &&
+                    grupo.items.every((t) => new Date(t.due_at) < now) && (
+                      <LineaDeAhora now={now} key="linea-final" />
+                    )}
+                </AnimatePresence>
+              </motion.ul>
             </section>
           ))
         )}
@@ -361,19 +418,21 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
               {listos.length} {listos.length === 1 ? "cerrado" : "cerrados"}
               <ChevronDown className="size-3.5 transition-transform duration-200 group-open:rotate-180" />
             </summary>
-            <ul className="mt-2 flex flex-col gap-2">
-              {listos.map((task) => (
-                <NodoPendiente
-                  key={task.id}
-                  task={task}
-                  now={now}
-                  onListo={alternarListo}
-                  onPosponer={posponer}
-                  onBorrar={borrar}
-                  onAbrir={(t) => setHoja({ task: t, titulo: "" })}
-                />
-              ))}
-            </ul>
+            <motion.ul layout className="mt-2 flex flex-col gap-2">
+              <AnimatePresence initial={false}>
+                {listos.map((task) => (
+                  <NodoPendiente
+                    key={task.id}
+                    task={task}
+                    now={now}
+                    onListo={alternarListo}
+                    onPosponer={posponer}
+                    onBorrar={borrar}
+                    onAbrir={(t) => setHoja({ task: t, titulo: "" })}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.ul>
           </details>
         )}
       </div>
@@ -391,16 +450,22 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
         onDetalles={(titulo) => setHoja({ task: null, titulo })}
       />
 
-      {hoja && (
-        <HojaDetalle
-          task={hoja.task}
-          tituloInicial={hoja.titulo}
-          tiposConocidos={tiposConocidos}
-          onGuardar={async (datos, id) => (id ? actualizar(datos, id) : crear(datos))}
-          onBorrar={borrar}
-          onCerrar={() => setHoja(null)}
-        />
-      )}
+      <AnimatePresence>
+        {hoja && (
+          <HojaDetalle
+            task={hoja.task}
+            tituloInicial={hoja.titulo}
+            tiposConocidos={tiposConocidos}
+            onGuardar={async (datos, id) => (id ? actualizar(datos, id) : crear(datos))}
+            onBorrar={borrar}
+            onCerrar={() => setHoja(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {cargando && <LoaderGlobal />}
+      </AnimatePresence>
     </>
   );
 }
@@ -415,7 +480,7 @@ function debeIrLineaAntes(items: Task[], i: number, now: Date): boolean {
 /** La firma de AvisaPe: dónde estás parado dentro del día. */
 function LineaDeAhora({ now }: { now: Date }) {
   return (
-    <li className="flex items-center gap-2.5 py-1" aria-hidden>
+    <motion.li layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2.5 py-1" aria-hidden>
       <span className="relative size-2.5 shrink-0">
         <span className="pulso absolute left-1/2 top-1/2 size-2.5 rounded-full bg-senal" />
       </span>
@@ -423,6 +488,18 @@ function LineaDeAhora({ now }: { now: Date }) {
         ahora {hora(now)}
       </span>
       <span className="h-px flex-1 bg-gradient-to-r from-senal/45 to-transparent" />
-    </li>
+    </motion.li>
   );
+}
+
+/** Resuelve qué icono lucide usar según la palabra clave del tipo de tarea */
+function IconoParaTipo({ tipo }: { tipo: string }) {
+  const k = tipo.toLowerCase();
+  if (k.includes("comid") || k.includes("cenar") || k.includes("desayuno") || k.includes("almuerzo")) return <Utensils className="size-[18px]" />;
+  if (k.includes("trabajo") || k.includes("reunión") || k.includes("meet")) return <Briefcase className="size-[18px]" />;
+  if (k.includes("médic") || k.includes("terapia") || k.includes("sesión") || k.includes("salud")) return <HeartPulse className="size-[18px]" />;
+  if (k.includes("pago") || k.includes("banco") || k.includes("dinero")) return <Wallet className="size-[18px]" />;
+  if (k.includes("alarma") || k.includes("despertar")) return <Bell className="size-[18px]" />;
+  if (k.includes("personal")) return <User className="size-[18px]" />;
+  return <ListTodo className="size-[18px]" />;
 }

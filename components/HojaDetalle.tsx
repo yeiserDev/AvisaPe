@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, X } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   LARGO_MAX_TIPO,
   LEAD_OPTIONS,
@@ -125,7 +126,13 @@ export default function HojaDetalle({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
+    >
       <button
         type="button"
         aria-label="Cerrar"
@@ -133,9 +140,14 @@ export default function HojaDetalle({
         className="absolute inset-0 bg-tinta/40 backdrop-blur-md"
       />
 
-      <form
+      <motion.form
+        layout
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 40, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
         onSubmit={guardar}
-        className="vidrio entrada safe-bottom relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-bloque p-6 sm:rounded-bloque"
+        className="vidrio safe-bottom relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-bloque p-6 sm:rounded-bloque"
       >
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-display text-2xl font-bold tracking-tight">
@@ -331,7 +343,7 @@ export default function HojaDetalle({
             )}
           </>
         )}
-      </form>
-    </div>
+      </motion.form>
+    </motion.div>
   );
 }

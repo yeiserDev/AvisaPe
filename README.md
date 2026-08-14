@@ -81,20 +81,27 @@ después. En ese caso hay que volver a desplegar.
 
 ### 5. El despachador cada minuto
 
+Sin esta pieza los avisos quedan programados en la tabla `reminders` pero nadie
+los despacha nunca. **Es el paso que hace que la app suene sola.**
+
 **El plan Hobby de Vercel solo permite crons de una vez al día**, que no sirve
 para recordatorios, y un `vercel.json` con un cron más frecuente hace fallar el
-despliegue. Por eso [`vercel.json`](vercel.json) no declara ninguno. Dos salidas:
+despliegue. Por eso [`vercel.json`](vercel.json) no declara ninguno.
 
-- **Gratis, con [cron-job.org](https://cron-job.org)** (recomendado) — crea un
-  job cada minuto contra `https://TU-APP.vercel.app/api/cron/dispatch`, con la
-  cabecera `Authorization: Bearer <tu CRON_SECRET>`.
-- **Vercel Pro** — agrega este bloque a `vercel.json`:
+**La salida recomendada es el propio Supabase**, con `pg_cron` y `pg_net`, que
+vienen incluidos en el plan gratuito: corre
+[`supabase/migraciones/002-cron-avisos.sql`](supabase/migraciones/002-cron-avisos.sql)
+en el SQL Editor, reemplazando el dominio y el `CRON_SECRET`. No necesitas
+ninguna cuenta extra ni un servicio de terceros.
 
-  ```json
-  "crons": [{ "path": "/api/cron/dispatch", "schedule": "* * * * *" }]
-  ```
+Alternativas: un job cada minuto en [cron-job.org](https://cron-job.org) contra
+`https://TU-APP.vercel.app/api/cron/dispatch` con la cabecera
+`Authorization: Bearer <tu CRON_SECRET>`; o Vercel Pro, agregando a
+`vercel.json`:
 
-  Vercel manda solo el `Authorization: Bearer $CRON_SECRET` a sus propios crons.
+```json
+"crons": [{ "path": "/api/cron/dispatch", "schedule": "* * * * *" }]
+```
 
 Puedes probar el despachador a mano:
 
