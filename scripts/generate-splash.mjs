@@ -1,26 +1,16 @@
-// Pantallas de arranque para iOS. Uso: npm run splash
-//
-// iOS no escala una sola imagen: exige un PNG por resolución exacta, y si no
-// encuentra el de tu modelo muestra una pantalla en blanco. Por eso la lista.
-//
-// El texto se dibuja como vectores con la tipografía real de la app. Depender
-// de las fuentes instaladas en la máquina daría un resultado distinto en cada
-// computadora, y ninguna tiene Bricolage Grotesque.
+// Pantallas de arranque para iOS con Gengar. Uso: npm run splash
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import opentype from "opentype.js";
 import sharp from "sharp";
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
 const destino = join(raiz, "public", "splash");
+const logoPath = join(raiz, "public", "avisape.png");
 
-// Medianoche lila: la app es clara, pero el arranque es hondo y luminoso.
-const FONDO = "#140f26";
-const FONDO_BORDE = "#0b0817";
-const BRUMA = "#3b2a73";
-const RESPLANDOR = "#6b4bd6";
-const SENAL = "#c4b2ff";
+// Tonos oscuros para encuadrar la imagen de Gengar
+const FONDO = "#11081e";
+const CENTRO = "#582199";
 
 /** iPhones vigentes: puntos CSS, densidad y píxeles reales. */
 const PANTALLAS = [
@@ -38,112 +28,15 @@ const PANTALLAS = [
   { w: 440, h: 956, r: 3 }, // 16 Pro Max
 ];
 
-const fuente = opentype.parse(
-  (await readFile(join(raiz, "scripts", "fuentes", "BricolageGrotesque-Bold.ttf"))).buffer,
-);
-
-/**
- * Texto a curvas, centrado en `cx`.
- *
- * Se recorre glifo por glifo en vez de usar `font.getPath`: el motor de
- * composición de opentype.js no soporta una de las tablas de esta fuente y
- * revienta. El cmap y el kerning sí se leen bien, que es todo lo que hace
- * falta para una palabra en latín.
- */
-function palabra(texto, cx, baseline, tamano, respiro = 0) {
-  const escala = tamano / fuente.unitsPerEm;
-  const glifos = [...texto].map((ch) => fuente.charToGlyph(ch));
-
-  const avances = glifos.map((g, i) => {
-    const kern = i > 0 ? fuente.getKerningValue(glifos[i - 1], g) : 0;
-    return { kern: kern * escala, avance: g.advanceWidth * escala };
-  });
-
-  const ancho =
-    avances.reduce((suma, a) => suma + a.kern + a.avance + respiro, 0) - respiro;
-
-  let x = cx - ancho / 2;
-  const partes = [];
-
-  glifos.forEach((g, i) => {
-    x += avances[i].kern;
-    partes.push(g.getPath(x, baseline, tamano).toPathData(2));
-    x += avances[i].avance + respiro;
-  });
-
-  return partes.join(" ");
-}
-
-/**
- * El arte del arranque: el riel del día suspendido en la oscuridad, con la
- * línea de ahora encendida y su señal expandiéndose. Todo lo demás calla.
- */
-function arte(ancho, alto) {
-  const u = Math.min(ancho, alto) / 100;
-  const cx = ancho / 2;
-  const cy = alto * 0.415;
-
-  // El riel se corre a la izquierda y la línea de ahora sale a la derecha,
-  // igual que en la app. El conjunto queda centrado ópticamente.
-  const rx = cx - u * 7;
-  const alcance = u * 17;
-  const finLinea = rx + u * 15;
-
-  return `
-<svg xmlns="http://www.w3.org/2000/svg" width="${ancho}" height="${alto}" viewBox="0 0 ${ancho} ${alto}">
-  <defs>
-    <radialGradient id="bruma" gradientUnits="userSpaceOnUse"
-                    cx="${cx}" cy="${cy}" r="${u * 62}">
-      <stop offset="0%" stop-color="${BRUMA}"/>
-      <stop offset="100%" stop-color="${FONDO}" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="foco" gradientUnits="userSpaceOnUse"
-                    cx="${rx}" cy="${cy}" r="${u * 30}">
-      <stop offset="0%" stop-color="${RESPLANDOR}" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="${RESPLANDOR}" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="vineta" gradientUnits="userSpaceOnUse"
-                    cx="${cx}" cy="${cy}" r="${Math.max(ancho, alto) * 0.62}">
-      <stop offset="45%" stop-color="${FONDO_BORDE}" stop-opacity="0"/>
-      <stop offset="100%" stop-color="${FONDO_BORDE}" stop-opacity="0.9"/>
-    </radialGradient>
-    <!-- En una línea horizontal la caja delimitadora tiene alto cero, así que
-         el degradado necesita coordenadas del lienzo, no proporcionales. -->
-    <linearGradient id="ahora" gradientUnits="userSpaceOnUse"
-                    x1="${rx}" y1="${cy}" x2="${finLinea}" y2="${cy}">
-      <stop offset="0%" stop-color="${SENAL}"/>
-      <stop offset="55%" stop-color="${SENAL}" stop-opacity="0.75"/>
-      <stop offset="100%" stop-color="${SENAL}" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-
-  <rect width="${ancho}" height="${alto}" fill="${FONDO}"/>
-  <rect width="${ancho}" height="${alto}" fill="url(#bruma)"/>
-  <rect width="${ancho}" height="${alto}" fill="url(#foco)"/>
-  <rect width="${ancho}" height="${alto}" fill="url(#vineta)"/>
-
-  <!-- El riel del día: arriba lo que pasó, abajo lo que viene -->
-  <line x1="${rx}" y1="${cy - alcance}" x2="${rx}" y2="${cy + alcance}"
-        stroke="#ffffff" stroke-opacity="0.18" stroke-width="${u * 0.55}" stroke-linecap="round"/>
-  <circle cx="${rx}" cy="${cy - alcance * 0.76}" r="${u * 1.05}" fill="#ffffff" fill-opacity="0.25"/>
-  <circle cx="${rx}" cy="${cy - alcance * 0.38}" r="${u * 1.05}" fill="#ffffff" fill-opacity="0.25"/>
-  <circle cx="${rx}" cy="${cy + alcance * 0.42}" r="${u * 1.35}" fill="#ffffff" fill-opacity="0.9"/>
-  <circle cx="${rx}" cy="${cy + alcance * 0.8}" r="${u * 1.35}" fill="#ffffff" fill-opacity="0.9"/>
-
-  <!-- La línea de ahora, encendida y desvaneciéndose hacia lo que falta -->
-  <line x1="${rx}" y1="${cy}" x2="${finLinea}" y2="${cy}"
-        stroke="url(#ahora)" stroke-width="${u * 1.9}" stroke-linecap="round"/>
-  <circle cx="${rx}" cy="${cy}" r="${u * 5.4}" fill="${SENAL}" fill-opacity="0.16"/>
-  <circle cx="${rx}" cy="${cy}" r="${u * 3.1}" fill="${SENAL}"/>
-
-  <!-- Marca -->
-  <path d="${palabra("AvisaPe", cx, cy + alcance + u * 15, u * 10.5)}" fill="#ffffff"/>
-  <path d="${palabra("TUS PENDIENTES, A TIEMPO", cx, cy + alcance + u * 21.5, u * 2.5, u * 0.62)}"
-        fill="${SENAL}" fill-opacity="0.5"/>
-</svg>`;
-}
-
 await mkdir(destino, { recursive: true });
+
+let logoBuffer;
+try {
+  logoBuffer = await readFile(logoPath);
+} catch (error) {
+  console.error("❌ No se encontró public/avisape.png. Asegúrate de que el archivo exista.");
+  process.exit(1);
+}
 
 const enlaces = [];
 
@@ -152,7 +45,31 @@ for (const { w, h, r } of PANTALLAS) {
   const alto = h * r;
   const archivo = `splash-${ancho}x${alto}.png`;
 
-  const png = await sharp(Buffer.from(arte(ancho, alto))).png().toBuffer();
+  // Tamaño del logo según el ancho de la pantalla (45% del ancho)
+  const logoSize = Math.round(ancho * 0.45);
+
+  const backgroundSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${ancho}" height="${alto}">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="${CENTRO}"/>
+      <stop offset="100%" stop-color="${FONDO}"/>
+    </radialGradient>
+  </defs>
+  <rect width="${ancho}" height="${alto}" fill="url(#bg)"/>
+</svg>`;
+
+  const logoResized = await sharp(logoBuffer)
+    .resize(logoSize, logoSize, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .toBuffer();
+
+  const png = await sharp(Buffer.from(backgroundSvg))
+    .composite([
+      { input: logoResized, gravity: "center" }
+    ])
+    .png()
+    .toBuffer();
+
   await writeFile(join(destino, archivo), png);
 
   enlaces.push({

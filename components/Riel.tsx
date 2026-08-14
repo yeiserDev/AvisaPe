@@ -265,27 +265,54 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
               </form>
             </div>
 
-            {/* Calendario 3D CSS puro */}
-            <div className="absolute -right-2 top-16 w-44 h-44 select-none pointer-events-none drop-shadow-2xl">
-              <div className="absolute top-2 left-6 text-white/90 text-xl animate-pulse">✨</div>
-              <div className="absolute top-8 right-6 text-white/70 text-sm animate-pulse" style={{ animationDelay: '0.5s' }}>✨</div>
+            {/* Calendario 3D Ultra-Premium */}
+            <motion.div 
+              animate={{ y: [0, -6, 0], rotateZ: [0, 1.5, -0.5, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -right-2 top-14 w-44 h-44 select-none pointer-events-none drop-shadow-[0_22px_35px_rgba(28,18,62,0.45)]"
+            >
+              {/* Estrellas flotantes */}
+              <motion.div animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ duration: 3, repeat: Infinity }} className="absolute top-0 left-5 text-white text-xl">✨</motion.div>
+              <motion.div animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.7, 1.1, 0.7] }} transition={{ duration: 4, repeat: Infinity, delay: 1 }} className="absolute top-7 right-4 text-white text-sm">✨</motion.div>
               
-              {/* Cuerpo del calendario */}
-              <div className="absolute inset-5 rounded-3xl bg-gradient-to-br from-[#b39deb] to-[#866cd4] shadow-[inset_0_5px_15px_rgba(255,255,255,0.5),0_15px_25px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden border border-white/30">
-                <div className="h-11 bg-gradient-to-b from-white/30 to-white/5 border-b border-white/20 shadow-sm relative">
-                  <div className="absolute -top-2 left-6 w-3 h-8 rounded-full bg-gradient-to-b from-[#ffffff] to-[#c0b5de] shadow-md border border-white/80 z-10"></div>
-                  <div className="absolute -top-2 right-6 w-3 h-8 rounded-full bg-gradient-to-b from-[#ffffff] to-[#c0b5de] shadow-md border border-white/80 z-10"></div>
-                </div>
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="w-16 h-2 bg-white/20 rounded-full shadow-inner mt-4"></div>
+              {/* Cuerpo principal del calendario con extrusión 3D simulada */}
+              <div className="absolute inset-4 rounded-[1.8rem] bg-gradient-to-br from-[#d4c3ff] via-[#a387f0] to-[#7656d4] p-[1.5px] shadow-[inset_0_4px_12px_rgba(255,255,255,0.8),inset_0_-8px_16px_rgba(0,0,0,0.15),0_15px_25px_rgba(0,0,0,0.1)]">
+                {/* Textura frontal y cristal */}
+                <div className="w-full h-full rounded-[1.8rem] bg-gradient-to-b from-white/30 to-transparent flex flex-col overflow-hidden relative">
+                  
+                  {/* Brillo diagonal Liquid Glass */}
+                  <div className="absolute -inset-12 bg-gradient-to-tr from-transparent via-white/20 to-transparent rotate-45 transform translate-x-2 -translate-y-6"></div>
+                  
+                  {/* Cabecera / Pliegue superior */}
+                  <div className="h-[2.8rem] bg-white/20 border-b border-white/30 shadow-[0_3px_12px_rgba(0,0,0,0.06)] relative backdrop-blur-md">
+                    {/* Anillos metálicos 3D */}
+                    <div className="absolute -top-3.5 left-5 w-3.5 h-10 rounded-full bg-gradient-to-r from-[#f4f4f4] via-[#ffffff] to-[#b8b8b8] shadow-[inset_0_2px_4px_rgba(255,255,255,0.9),0_5px_8px_rgba(0,0,0,0.35)] border border-white/60">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent to-black/20 mix-blend-multiply"></div>
+                    </div>
+                    <div className="absolute -top-3.5 right-5 w-3.5 h-10 rounded-full bg-gradient-to-r from-[#f4f4f4] via-[#ffffff] to-[#b8b8b8] shadow-[inset_0_2px_4px_rgba(255,255,255,0.9),0_5px_8px_rgba(0,0,0,0.35)] border border-white/60">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent to-black/20 mix-blend-multiply"></div>
+                    </div>
+                  </div>
+
+                  {/* Detalle interno */}
+                  <div className="flex-1 flex items-center justify-center pb-2">
+                    <div className="w-[4.5rem] h-2.5 bg-white/25 rounded-full shadow-[inset_0_1px_3px_rgba(0,0,0,0.15)] mt-3"></div>
+                  </div>
                 </div>
               </div>
               
-              {/* Checkmark 3D */}
-              <div className="absolute bottom-2 right-2 size-14 rounded-full bg-gradient-to-br from-[#dcd1fa] to-[#a28af0] shadow-[inset_0_3px_8px_rgba(255,255,255,0.9),0_10px_20px_rgba(0,0,0,0.4)] flex items-center justify-center border-[1.5px] border-white/50">
-                <Check className="size-7 text-white drop-shadow-md" strokeWidth={4} />
-              </div>
-            </div>
+              {/* Checkmark 3D Flotante con Parallax inverso */}
+              <motion.div 
+                animate={{ y: [0, 4, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute bottom-1 right-0 size-16 rounded-full bg-gradient-to-br from-[#e9e2ff] via-[#b6a0f5] to-[#886aeb] p-[1.5px] shadow-[inset_0_5px_10px_rgba(255,255,255,0.9),inset_0_-5px_10px_rgba(0,0,0,0.15),0_12px_28px_rgba(28,18,62,0.5)]"
+              >
+                <div className="w-full h-full rounded-full bg-gradient-to-b from-white/30 to-transparent flex items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/50 to-transparent rotate-45 transform translate-x-1 -translate-y-4"></div>
+                  <Check className="size-8 text-white drop-shadow-[0_3px_5px_rgba(0,0,0,0.25)]" strokeWidth={5} />
+                </div>
+              </motion.div>
+            </motion.div>
 
             <div className="relative z-10 mt-11 w-[70%]">
               <p className="font-display text-xl font-bold tracking-tight text-white/95">
