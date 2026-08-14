@@ -47,7 +47,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#e6e2f0",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e6e2f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#e6e2f0" }
+  ],
   width: "device-width",
   initialScale: 1,
   // Evita el zoom al enfocar inputs en iOS sin bloquear el zoom manual.
