@@ -47,10 +47,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#e6e2f0" },
-    { media: "(prefers-color-scheme: dark)", color: "#e6e2f0" }
-  ],
+  // Sin atributo `media`: Safari en iOS descarta los theme-color que lo llevan
+  // y deja sus barras en el gris oscuro del sistema. La app es clara siempre,
+  // así que un único valor es además lo correcto.
+  themeColor: "#e6e2f0",
   width: "device-width",
   initialScale: 1,
   // Evita el zoom al enfocar inputs en iOS sin bloquear el zoom manual.

@@ -36,8 +36,26 @@
   color-scheme: light;
 }
 
+/*
+ * La malla sobre la que se apoya todo. El vidrio no tiene nada que hacer sobre
+ * un color plano: necesita variación detrás para refractar algo.
+ *
+ * Va aquí, en <html>, y no en un elemento con position:fixed. En iOS los
+ * elementos fijos se dimensionan contra el viewport pequeño, así que al
+ * ocultarse las barras de Safari quedaban a la vista franjas del color plano
+ * de abajo, arriba y abajo de la pantalla. El fondo de <html> se propaga al
+ * lienzo del navegador y cubre siempre toda el área visible.
+ */
 html {
-  background: var(--color-lienzo);
+  background:
+    radial-gradient(58% 42% at 10% 6%, #cec2ec 0%, transparent 62%),
+    radial-gradient(48% 38% at 90% 10%, #a795de 0%, transparent 64%),
+    radial-gradient(66% 48% at 82% 90%, #8f7ec6 0%, transparent 62%),
+    radial-gradient(54% 44% at 14% 94%, #ded6f4 0%, transparent 60%),
+    linear-gradient(158deg, #f0ecfa 0%, #ded5f2 46%, #cabee7 100%);
+  /* Anclada al viewport: en una lista larga la malla no se estira. */
+  background-attachment: fixed;
+  background-color: var(--color-lienzo);
   -webkit-tap-highlight-color: transparent;
   /* Nada debe empujar la página a lo ancho: el desplazamiento lateral en el
      móvil se siente como si la app estuviera rota. */
@@ -59,26 +77,14 @@ html {
 }
 
 body {
-  background: var(--color-lienzo);
+  /* Transparente a propósito: el fondo lo pinta <html> y así se propaga al
+     lienzo del navegador, que sí cubre el área bajo la barra de estado y bajo
+     la barra de Safari. */
+  background: transparent;
   color: var(--color-tinta);
   font-family: var(--font-sans);
   /* En standalone iOS el rebote del scroll deja ver el fondo del sistema. */
   overscroll-behavior-y: none;
-}
-
-/* El lienzo sobre el que se apoya todo. El vidrio no tiene nada que hacer
-   sobre un color plano: necesita variación detrás para refractar algo. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(58% 42% at 10% 6%, #cec2ec 0%, transparent 62%),
-    radial-gradient(48% 38% at 90% 10%, #a795de 0%, transparent 64%),
-    radial-gradient(66% 48% at 82% 90%, #8f7ec6 0%, transparent 62%),
-    radial-gradient(54% 44% at 14% 94%, #ded6f4 0%, transparent 60%),
-    linear-gradient(158deg, #f0ecfa 0%, #ded5f2 46%, #cabee7 100%);
 }
 
 /* ── Liquid Glass ──────────────────────────────────────────────
