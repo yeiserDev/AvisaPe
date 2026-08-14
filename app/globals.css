@@ -50,6 +50,19 @@
  */
 html {
   background:
+    /* Difuminado de borde. Va primero, encima de todo lo demás: iOS pinta sus
+       barras con el theme-color, y si el primer píxel de la página fuera el
+       violeta claro de la malla se vería la costura. Arrancando y terminando
+       en el color exacto de las barras, no hay dónde ver el corte. */
+    linear-gradient(
+      to bottom,
+      #140a23 0%,
+      rgba(20, 10, 35, 0.72) 5%,
+      rgba(20, 10, 35, 0) 15%,
+      rgba(20, 10, 35, 0) 84%,
+      rgba(20, 10, 35, 0.72) 95%,
+      #140a23 100%
+    ),
     radial-gradient(58% 42% at 10% 4%, #3d2168 0%, transparent 62%),
     radial-gradient(50% 38% at 92% 12%, #2c1a56 0%, transparent 64%),
     radial-gradient(66% 46% at 84% 92%, #452573 0%, transparent 62%),
