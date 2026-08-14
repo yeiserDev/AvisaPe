@@ -74,20 +74,27 @@ npm i -g vercel
 vercel
 ```
 
-En Vercel, **Settings → Environment Variables**, carga las mismas variables de
-`.env.local`. Vercel manda solo el `Authorization: Bearer $CRON_SECRET` a los
-cron jobs, así que el despachador queda protegido sin configurar nada más.
+En Vercel, **Settings → Environment Variables**, carga las mismas ocho
+variables de `.env.local`. Las `NEXT_PUBLIC_*` se incrustan al compilar: si
+faltan al momento del build, la app se despliega rota aunque las agregues
+después. En ese caso hay que volver a desplegar.
 
 ### 5. El despachador cada minuto
 
-[`vercel.json`](vercel.json) ya declara el cron `* * * * *`. **El plan gratuito
-de Vercel solo permite un cron diario**, que no sirve para recordatorios. Dos
-salidas:
+**El plan Hobby de Vercel solo permite crons de una vez al día**, que no sirve
+para recordatorios, y un `vercel.json` con un cron más frecuente hace fallar el
+despliegue. Por eso [`vercel.json`](vercel.json) no declara ninguno. Dos salidas:
 
-- **Vercel Pro** — el `vercel.json` ya funciona tal cual.
-- **Gratis, con [cron-job.org](https://cron-job.org)** — crea un job cada
-  minuto contra `https://TU-APP.vercel.app/api/cron/dispatch`, con la cabecera
-  `Authorization: Bearer <tu CRON_SECRET>`.
+- **Gratis, con [cron-job.org](https://cron-job.org)** (recomendado) — crea un
+  job cada minuto contra `https://TU-APP.vercel.app/api/cron/dispatch`, con la
+  cabecera `Authorization: Bearer <tu CRON_SECRET>`.
+- **Vercel Pro** — agrega este bloque a `vercel.json`:
+
+  ```json
+  "crons": [{ "path": "/api/cron/dispatch", "schedule": "* * * * *" }]
+  ```
+
+  Vercel manda solo el `Authorization: Bearer $CRON_SECRET` a sus propios crons.
 
 Puedes probar el despachador a mano:
 
