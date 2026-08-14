@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import Arranque from "@/components/Arranque";
+import VelosBorde from "@/components/VelosBorde";
 import { SPLASH_LINKS } from "@/lib/splash";
 import "./globals.css";
 
@@ -67,6 +68,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-dvh antialiased">
         <Arranque />
         {children}
+        {/* Va al final para quedar sobre el contenido, pero por debajo de la
+            barra flotante y de los filtros pegajosos, que deben verse nítidos. */}
+        <VelosBorde />
       </body>
     </html>
   );

@@ -237,6 +237,68 @@ body {
   }
 }
 
+/* ── Velos de borde ───────────────────────────────────────────
+   Lo que iOS hace en sus apps nativas: el contenido no se corta contra
+   la barra, se desvanece bajo un desenfoque que se va apagando. Son dos
+   capas superpuestas —una desenfoca, la otra tiñe— y ambas llevan una
+   máscara que las disuelve hacia el centro de la pantalla, así que no
+   hay ningún borde duro que delate dónde termina el velo.
+   ───────────────────────────────────────────────────────────── */
+.velo {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+.velo::before,
+.velo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.velo::before {
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+.velo-arriba {
+  top: 0;
+  height: calc(env(safe-area-inset-top) + 3.25rem);
+}
+.velo-arriba::before {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 100%);
+}
+.velo-arriba::after {
+  background: linear-gradient(
+    to bottom,
+    #140a23 0%,
+    rgba(20, 10, 35, 0.78) 38%,
+    rgba(20, 10, 35, 0) 100%
+  );
+}
+
+.velo-abajo {
+  bottom: 0;
+  height: calc(env(safe-area-inset-bottom) + 4rem);
+}
+.velo-abajo::before {
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 42%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 42%, transparent 100%);
+}
+.velo-abajo::after {
+  background: linear-gradient(
+    to top,
+    #140a23 0%,
+    rgba(20, 10, 35, 0.78) 38%,
+    rgba(20, 10, 35, 0) 100%
+  );
+}
+
 /* Respeta el notch y la barra de gestos del iPhone. */
 .safe-top {
   padding-top: max(0.75rem, env(safe-area-inset-top));
