@@ -49,6 +49,32 @@ export function etiquetaDia(d: Date, now: Date = new Date()): string {
   return texto.charAt(0).toUpperCase() + texto.slice(1).replace(/\./g, "");
 }
 
+/** El lunes de la semana a la que pertenece la fecha. */
+export function inicioDeSemana(d: Date): Date {
+  const r = new Date(d);
+  r.setHours(0, 0, 0, 0);
+  r.setDate(r.getDate() - ((r.getDay() + 6) % 7));
+  return r;
+}
+
+/** "Lun 11" para las columnas de la semana. */
+export function diaCorto(d: Date): { dia: string; numero: number } {
+  const dia = d.toLocaleDateString("es-PE", { weekday: "short" }).replace(/\.$/, "");
+  return { dia: dia.charAt(0).toUpperCase() + dia.slice(1), numero: d.getDate() };
+}
+
+/** "11 – 17 de agosto", o con los dos meses si la semana los cruza. */
+export function rangoSemana(lunes: Date): string {
+  const domingo = new Date(lunes);
+  domingo.setDate(lunes.getDate() + 6);
+
+  const mes = (d: Date) => d.toLocaleDateString("es-PE", { month: "long" });
+
+  return mes(lunes) === mes(domingo)
+    ? `${lunes.getDate()} – ${domingo.getDate()} de ${mes(domingo)}`
+    : `${lunes.getDate()} ${mes(lunes)} – ${domingo.getDate()} ${mes(domingo)}`;
+}
+
 /** Diferencia en días de calendario, no en horas transcurridas. */
 export function diasDeDiferencia(a: Date, b: Date): number {
   const inicioA = new Date(a.getFullYear(), a.getMonth(), a.getDate());

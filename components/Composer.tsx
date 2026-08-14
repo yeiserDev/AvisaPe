@@ -35,9 +35,11 @@ function atajos(): { label: string; fecha: () => Date }[] {
 type Props = {
   onCrearRapido: (titulo: string, cuando: Date) => Promise<void>;
   onDetalles: (titulo: string) => void;
+  /** Se aparta cuando la semana está abierta: ahí no hay nada que capturar. */
+  escondido?: boolean;
 };
 
-export default function Composer({ onCrearRapido, onDetalles }: Props) {
+export default function Composer({ onCrearRapido, onDetalles, escondido = false }: Props) {
   const [titulo, setTitulo] = useState("");
   const [ocupado, setOcupado] = useState(false);
   const [enfocado, setEnfocado] = useState(false);
@@ -75,7 +77,12 @@ export default function Composer({ onCrearRapido, onDetalles }: Props) {
   }
 
   return (
-    <div className="safe-bottom pointer-events-none fixed inset-x-0 bottom-0 z-30 px-4 pt-10">
+    <div
+      className={`safe-bottom pointer-events-none fixed inset-x-0 bottom-0 z-30 px-4 pt-10 transition-all duration-300 ${
+        escondido ? "translate-y-6 opacity-0" : "translate-y-0 opacity-100"
+      }`}
+      aria-hidden={escondido}
+    >
       <div className="pointer-events-auto mx-auto max-w-2xl">
         {hayTexto && (
           <div className="entrada sin-barra mb-2.5 flex justify-center gap-2 overflow-x-auto">

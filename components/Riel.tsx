@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, LogOut, Utensils, Briefcase, HeartPulse, Wallet, Bell, User, Clock, CheckSquare, ListTodo, Check } from "lucide-react";
+import { CalendarDays, ChevronDown, LogOut, Utensils, Briefcase, HeartPulse, Wallet, Bell, User, Clock, CheckSquare, ListTodo, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { TIPO_POR_DEFECTO, type NewTask, type Task } from "@/lib/types";
@@ -12,6 +12,7 @@ import {
   hora,
   siguienteOcurrencia,
 } from "@/lib/time";
+import AgendaSemana from "./AgendaSemana";
 import AvisosGate from "./AvisosGate";
 import Composer from "./Composer";
 import HojaDetalle from "./HojaDetalle";
@@ -29,7 +30,9 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
   const [filtro, setFiltro] = useState<Filtro>("todo");
   const [hoja, setHoja] = useState<{ task: Task | null; titulo: string } | null>(null);
   const [cargando, setCargando] = useState(false);
+  const [agenda, setAgenda] = useState(false);
   const paramsProcesados = useRef(false);
+  const toque = useRef<{ x: number; y: number; ms: number } | null>(null);
 
   // El riel es un reloj: sin este latido las cuentas regresivas mienten.
   useEffect(() => {
@@ -243,9 +246,48 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
 
   const filtros: Filtro[] = ["todo", ...tiposConocidos];
 
+  // ── Gesto para abrir la semana ──────────────────────────────
+
+  function alEmpezarToque(e: React.TouchEvent) {
+    // Las filas de píldoras y el calendario se desplazan solas en horizontal;
+    // un gesto que nace ahí es para ellas, no para abrir el panel.
+    if ((e.target as HTMLElement).closest(".sin-barra, [data-sin-deslizar]")) {
+      toque.current = null;
+      return;
+    }
+    const t = e.touches[0];
+    toque.current = { x: t.clientX, y: t.clientY, ms: Date.now() };
+  }
+
+  function alSoltarToque(e: React.TouchEvent) {
+    const inicio = toque.current;
+    toque.current = null;
+    if (!inicio) return;
+
+    const t = e.changedTouches[0];
+    const dx = t.clientX - inicio.x;
+    const dy = t.clientY - inicio.y;
+    const duracion = Math.max(1, Date.now() - inicio.ms);
+
+    // Tres condiciones para no abrirlo por error: claramente horizontal,
+    // recorrido largo, y con intención (rápido, o muy largo si fue lento).
+    const horizontal = Math.abs(dx) > Math.abs(dy) * 2;
+    const rapido = Math.abs(dx) / duracion > 0.45;
+    if (!horizontal) return;
+
+    if (dx < -90 && (rapido || dx < -170)) setAgenda(true);
+    else if (dx > 90 && (rapido || dx > 170)) setAgenda(false);
+  }
+
   return (
     <>
-      <div className="mx-auto max-w-2xl pb-36">
+      <motion.div
+        animate={{ x: agenda ? "-82%" : "0%" }}
+        transition={{ type: "spring", stiffness: 320, damping: 34 }}
+        onTouchStart={alEmpezarToque}
+        onTouchEnd={alSoltarToque}
+        className="mx-auto max-w-2xl pb-36"
+      >
         {/* ── Bloque protagonista ── */}
         <header className="safe-top px-3">
           <div className="hero-card rounded-[2rem] px-6 pb-7 pt-6 text-white">
@@ -253,16 +295,30 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
               <span className="rounded-full bg-white/10 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
                 AvisaPe
               </span>
-              <form action="/auth/salir" method="post" className="relative z-20">
+              <div className="relative z-20 flex items-center gap-2">
+                {/* El gesto no se ve ni existe en escritorio: siempre tiene que
+                    haber un botón que haga lo mismo. */}
                 <button
-                  type="submit"
-                  title={`Salir de ${email}`}
-                  aria-label={`Salir de ${email}`}
-                  className="grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
+                  type="button"
+                  onClick={() => setAgenda(true)}
+                  title="Ver la semana"
+                  aria-label="Ver la semana"
+                  className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                 >
-                  <LogOut className="size-[18px] text-white/80" />
+                  <CalendarDays className="size-[18px] text-white/80" />
                 </button>
-              </form>
+
+                <form action="/auth/salir" method="post">
+                  <button
+                    type="submit"
+                    title={`Salir de ${email}`}
+                    aria-label={`Salir de ${email}`}
+                    className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
+                  >
+                    <LogOut className="size-[18px] text-white/80" />
+                  </button>
+                </form>
+              </div>
             </div>
 
             {/* Calendario 3D Ultra-Premium */}
@@ -462,9 +518,21 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
             </motion.ul>
           </details>
         )}
-      </div>
+      </motion.div>
+
+      <AgendaSemana
+        tasks={tasks}
+        now={now}
+        abierto={agenda}
+        onCerrar={() => setAgenda(false)}
+        onAbrirTarea={(t) => {
+          setAgenda(false);
+          setHoja({ task: t, titulo: "" });
+        }}
+      />
 
       <Composer
+        escondido={agenda}
         onCrearRapido={async (titulo, cuando) =>
           crear({
             title: titulo,
