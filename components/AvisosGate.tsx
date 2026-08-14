@@ -67,6 +67,15 @@ export default function AvisosGate() {
     setMensaje(null);
 
     try {
+      // Las NEXT_PUBLIC_* se incrustan al compilar: si faltaban en ese momento,
+      // aquí llegan vacías y conviene decirlo en vez de fallar sin explicación.
+      const llave = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!llave) {
+        throw new Error(
+          "Falta NEXT_PUBLIC_VAPID_PUBLIC_KEY en el servidor. Agrégala en Vercel y vuelve a desplegar.",
+        );
+      }
+
       const permiso = await Notification.requestPermission();
       if (permiso !== "granted") {
         setEstado(permiso === "denied" ? "bloqueado" : "pedir");
@@ -81,9 +90,7 @@ export default function AvisosGate() {
         existente ??
         (await reg.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: base64UrlABytes(
-            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-          ),
+          applicationServerKey: base64UrlABytes(llave),
         }));
 
       const r = await fetch("/api/push/subscribe", {
