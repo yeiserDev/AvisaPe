@@ -207,7 +207,7 @@ export default function HojaDetalle({
                   maxLength={LARGO_MAX_TIPO}
                   placeholder="Despertar"
                   aria-label="Nombre del tipo"
-                  className="w-28 bg-transparent py-1.5 text-[13px] text-tinta placeholder:text-humo/60 focus:outline-none"
+                  className="w-28 bg-transparent py-1.5 text-[13px] text-tinta placeholder:text-humo/60 focus:outline-none max-sm:text-base"
                 />
                 <span className="grid size-7 place-items-center rounded-full bg-senal text-white">
                   <Plus className="size-3.5" strokeWidth={3} />

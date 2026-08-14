@@ -39,6 +39,23 @@
 html {
   background: var(--color-lienzo);
   -webkit-tap-highlight-color: transparent;
+  /* Nada debe empujar la página a lo ancho: el desplazamiento lateral en el
+     móvil se siente como si la app estuviera rota. */
+  overflow-x: hidden;
+}
+
+/*
+ * Safari en iOS amplía la página al enfocar un campo cuya letra mide menos de
+ * 16 píxeles, y no deshace el zoom al salir: te quedas con toda la app
+ * agrandada. La única cura es que ningún control baje de 16px en pantallas
+ * táctiles. En escritorio se respetan los tamaños del diseño.
+ */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
 }
 
 body {

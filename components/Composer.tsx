@@ -117,7 +117,7 @@ export default function Composer({ onCrearRapido, onDetalles }: Props) {
             placeholder="¿Qué no se te puede pasar?"
             aria-label="Nuevo pendiente"
             tabIndex={encogido ? -1 : 0}
-            className={`min-w-0 flex-1 bg-transparent py-2.5 text-[15px] text-white placeholder:text-white/45 focus:outline-none ${
+            className={`min-w-0 flex-1 bg-transparent py-2.5 text-base text-white placeholder:text-white/45 focus:outline-none ${
               encogido ? "pointer-events-none opacity-0" : "opacity-100"
             } transition-opacity duration-200`}
           />

@@ -33,6 +33,8 @@ self.addEventListener("push", (event) => {
   const titulo = datos.title || "AvisaPe";
   const opciones = {
     body: datos.body || "",
+    lang: "es",
+    dir: "ltr",
     icon: "/icons/icon-192.png",
     badge: "/icons/badge-96.png",
     // Un tag por pendiente: si llegan dos avisos del mismo, se reemplaza.

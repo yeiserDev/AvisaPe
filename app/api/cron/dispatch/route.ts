@@ -5,7 +5,10 @@ import { enviarA } from "@/lib/push";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** Texto del aviso según cuánto falta para la hora. */
+/**
+ * Texto del aviso. Primero cuánto falta, que es lo que decide si sueltas lo
+ * que estás haciendo; el tipo va al final, como referencia.
+ */
 function cuerpo(dueAt: string, kind: string): string {
   const faltanMin = Math.round((new Date(dueAt).getTime() - Date.now()) / 60_000);
   const hora = new Date(dueAt).toLocaleTimeString("es-PE", {
@@ -17,10 +20,14 @@ function cuerpo(dueAt: string, kind: string): string {
 
   const etiqueta = kind?.trim() || "Pendiente";
 
-  if (faltanMin <= 1) return `${etiqueta} · es ahora (${hora})`;
-  if (faltanMin < 60) return `${etiqueta} · en ${faltanMin} min (${hora})`;
-  if (faltanMin < 1440) return `${etiqueta} · hoy a las ${hora}`;
-  return `${etiqueta} · mañana a las ${hora}`;
+  let cuando: string;
+  if (faltanMin <= 1) cuando = `Es ahora, ${hora}`;
+  else if (faltanMin < 60) cuando = `En ${faltanMin} min · ${hora}`;
+  else if (faltanMin < 120) cuando = `En 1 hora · ${hora}`;
+  else if (faltanMin < 1440) cuando = `Hoy a las ${hora}`;
+  else cuando = `Mañana a las ${hora}`;
+
+  return `${cuando} · ${etiqueta}`;
 }
 
 /**

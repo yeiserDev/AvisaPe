@@ -30,8 +30,8 @@ export async function POST() {
   let entregados = 0;
   for (const sub of subs) {
     const r = await enviarA(sub, {
-      title: "Prueba de AvisaPe",
-      body: "Si ves esto en la pantalla de bloqueo, los avisos ya funcionan.",
+      title: "Prueba de aviso",
+      body: "Es ahora · Si ves esto en tu bloqueo, los avisos ya funcionan.",
       url: "/",
     });
 
