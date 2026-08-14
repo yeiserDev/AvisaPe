@@ -29,8 +29,8 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "AvisaPe",
-    // La app es clara: la barra de estado necesita texto oscuro.
-    statusBarStyle: "default",
+    // La app es oscura: la barra de estado va translúcida con texto blanco.
+    statusBarStyle: "black-translucent",
   },
   icons: {
     icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
@@ -47,10 +47,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // Sin atributo `media`: Safari en iOS descarta los theme-color que lo llevan
-  // y deja sus barras en el gris oscuro del sistema. La app es clara siempre,
-  // así que un único valor es además lo correcto.
-  themeColor: "#e6e2f0",
+  // Sin atributo `media`: Safari en iOS descarta los theme-color que lo llevan.
+  // Es el mismo negro violáceo del fondo, para que sus barras se fundan con la
+  // app en vez de recortarla.
+  themeColor: "#140a23",
   width: "device-width",
   initialScale: 1,
   // Evita el zoom al enfocar inputs en iOS sin bloquear el zoom manual.

@@ -99,7 +99,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
   const yaPaso = valor.getTime() < Date.now();
 
   return (
-    <div className="mt-1.5 rounded-campo border border-white/70 bg-white/50 p-3">
+    <div className="mt-1.5 rounded-campo border border-white/10 bg-white/[0.04] p-3">
       {/* Atajos de día */}
       <div className="sin-barra mb-3 flex gap-2 overflow-x-auto">
         {[
@@ -119,8 +119,8 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
               aria-pressed={activo}
               className={`shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors ${
                 activo
-                  ? "bg-tinta text-white"
-                  : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
+                  ? "bg-tinta text-lienzo"
+                  : "border border-white/12 bg-white/[0.05] text-humo hover:border-tinta/60 hover:text-tinta"
               }`}
             >
               {a.label}
@@ -196,7 +196,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
       </div>
 
       {/* Hora */}
-      <div className="mt-3 border-t border-white/70 pt-3">
+      <div className="mt-3 border-t border-white/10 pt-3">
         <SelectorHora valor={valor} onCambio={onCambio} />
 
         <div className="sin-barra mt-2.5 flex gap-1.5 overflow-x-auto">
@@ -208,8 +208,8 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
               aria-pressed={aHoraTexto(valor) === h.valor}
               className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
                 aHoraTexto(valor) === h.valor
-                  ? "bg-tinta text-white"
-                  : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
+                  ? "bg-tinta text-lienzo"
+                  : "border border-white/12 bg-white/[0.05] text-humo hover:border-tinta/60 hover:text-tinta"
               }`}
             >
               {h.label}
@@ -219,7 +219,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
       </div>
 
       {yaPaso && (
-        <p className="mt-3 rounded-campo bg-alerta/[0.08] px-3 py-2 text-[12px] leading-snug text-alerta">
+        <p className="mt-3 rounded-campo border border-alerta/25 bg-alerta/10 px-3 py-2 text-[12px] leading-snug text-alerta">
           Esa hora ya pasó. Se guardará, pero no te va a avisar.
         </p>
       )}

@@ -65,7 +65,7 @@ export default function Entrar() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1.5 w-full rounded-campo border border-white/70 bg-white/45 px-4 py-3 text-base focus:border-senal focus:bg-white/85 focus:outline-none"
+          className="mt-1.5 w-full rounded-campo border border-white/12 bg-white/[0.06] px-4 py-3 text-base text-tinta focus:border-senal focus:bg-white/[0.1] focus:outline-none"
         />
 
         <label
@@ -82,7 +82,7 @@ export default function Entrar() {
           autoComplete="current-password"
           value={clave}
           onChange={(e) => setClave(e.target.value)}
-          className="mt-1.5 w-full rounded-campo border border-white/70 bg-white/45 px-4 py-3 text-base focus:border-senal focus:bg-white/85 focus:outline-none"
+          className="mt-1.5 w-full rounded-campo border border-white/12 bg-white/[0.06] px-4 py-3 text-base text-tinta focus:border-senal focus:bg-white/[0.1] focus:outline-none"
         />
 
         {error && (

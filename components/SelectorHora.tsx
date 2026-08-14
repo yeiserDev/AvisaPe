@@ -56,7 +56,7 @@ export default function SelectorHora({ valor, onCambio }: Props) {
   }
 
   return (
-    <div className="rounded-campo border border-white/60 bg-white/40 p-3">
+    <div className="rounded-campo border border-white/10 bg-white/[0.05] p-3">
       <div className="flex items-center justify-center gap-2.5">
         <Rueda
           etiqueta="Hora"
@@ -100,8 +100,8 @@ export default function SelectorHora({ valor, onCambio }: Props) {
               aria-pressed={tarde === t.pm}
               className={`rounded-full px-3.5 py-1.5 font-mono text-[12px] font-bold transition-colors ${
                 tarde === t.pm
-                  ? "bg-tinta text-white"
-                  : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
+                  ? "bg-tinta text-lienzo"
+                  : "border border-white/12 bg-white/[0.05] text-humo hover:border-tinta/60 hover:text-tinta"
               }`}
             >
               {t.label}
@@ -140,7 +140,7 @@ function Rueda({
         type="button"
         onClick={onSubir}
         aria-label={`Subir ${etiqueta.toLowerCase()}`}
-        className="grid h-7 w-14 place-items-center rounded-t-xl text-humo transition-colors hover:bg-borde/60 hover:text-tinta"
+        className="grid h-7 w-14 place-items-center rounded-t-xl text-humo transition-colors hover:bg-white/10 hover:text-tinta"
       >
         <ChevronUp className="size-4" strokeWidth={2.5} />
       </button>
@@ -162,14 +162,14 @@ function Rueda({
         }}
         inputMode="numeric"
         aria-label={etiqueta}
-        className="tnum w-14 rounded-lg border border-white/70 bg-white/75 py-1 text-center font-mono text-[28px] font-bold leading-tight text-tinta focus:border-senal focus:outline-none"
+        className="tnum w-14 rounded-lg border border-white/12 bg-white/10 py-1 text-center font-mono text-[28px] font-bold leading-tight text-tinta focus:border-senal focus:outline-none"
       />
 
       <button
         type="button"
         onClick={onBajar}
         aria-label={`Bajar ${etiqueta.toLowerCase()}`}
-        className="grid h-7 w-14 place-items-center rounded-b-xl text-humo transition-colors hover:bg-borde/60 hover:text-tinta"
+        className="grid h-7 w-14 place-items-center rounded-b-xl text-humo transition-colors hover:bg-white/10 hover:text-tinta"
       >
         <ChevronDown className="size-4" strokeWidth={2.5} />
       </button>

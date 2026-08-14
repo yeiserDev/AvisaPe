@@ -2,26 +2,28 @@
 
 /* ───────────────────────────────────────────────────────────────
    AvisaPe — sistema de diseño
-   Lila de bajo croma: profundo y frío, no pastel. Superficies muy
-   redondeadas, titulares pesados y una sola señal violeta reservada
-   para la línea de ahora y las acciones que importan.
+   Noche lila sobre #140A23. iOS impone barras oscuras a los lados de
+   la página y no hay forma de aclararlas, así que la app se construye
+   sobre ese mismo negro violáceo: las barras dejan de ser franjas y
+   pasan a ser el borde natural del diseño.
    ─────────────────────────────────────────────────────────────── */
 @theme {
   /* Fondos */
-  --color-lienzo: #e6e2f0;   /* la página */
-  --color-panel: #f6f4fb;    /* tarjetas y bandeja */
-  --color-realce: #9a8cbd;   /* bloque protagonista */
-  --color-realce-hondo: #6d5f92;
+  --color-lienzo: #140a23;   /* la página, y el color de las barras de iOS */
+  --color-panel: #1e1235;    /* superficie elevada */
+  --color-realce: #4a2f7d;   /* bloque protagonista */
+  --color-realce-hondo: #2b1a52;
 
-  /* Tinta */
-  --color-tinta: #171325;    /* titulares, píldora activa */
-  --color-humo: #6a6184;     /* texto secundario */
-  --color-borde: #d5cee6;
+  /* Tinta: en oscuro el color de máximo contraste es casi blanco, y es
+     también el relleno de los controles activos (con texto en lienzo). */
+  --color-tinta: #f3eefc;    /* titulares, píldora activa */
+  --color-humo: #a496c2;     /* texto secundario */
+  --color-borde: #ffffff1f;
 
-  /* Señales */
-  --color-senal: #6b4bd6;    /* la línea de ahora y la acción principal */
-  --color-alerta: #a8480f;   /* lo que se pasó */
-  --color-listo: #2c7a58;    /* lo cerrado */
+  /* Señales, subidas de luminosidad para que se lean sobre el fondo negro. */
+  --color-senal: #8b6dff;    /* la línea de ahora y la acción principal */
+  --color-alerta: #ff9b6a;   /* lo que se pasó */
+  --color-listo: #45d6a0;    /* lo cerrado */
 
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
@@ -33,7 +35,7 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 /*
@@ -48,11 +50,11 @@
  */
 html {
   background:
-    radial-gradient(58% 42% at 10% 6%, #cec2ec 0%, transparent 62%),
-    radial-gradient(48% 38% at 90% 10%, #a795de 0%, transparent 64%),
-    radial-gradient(66% 48% at 82% 90%, #8f7ec6 0%, transparent 62%),
-    radial-gradient(54% 44% at 14% 94%, #ded6f4 0%, transparent 60%),
-    linear-gradient(158deg, #f0ecfa 0%, #ded5f2 46%, #cabee7 100%);
+    radial-gradient(58% 42% at 10% 4%, #3d2168 0%, transparent 62%),
+    radial-gradient(50% 38% at 92% 12%, #2c1a56 0%, transparent 64%),
+    radial-gradient(66% 46% at 84% 92%, #452573 0%, transparent 62%),
+    radial-gradient(54% 44% at 12% 96%, #1b0e30 0%, transparent 60%),
+    linear-gradient(158deg, #1b0f2e 0%, #140a23 48%, #0e0719 100%);
   /* Anclada al viewport: en una lista larga la malla no se estira. */
   background-attachment: fixed;
   background-color: var(--color-lienzo);
@@ -88,74 +90,77 @@ body {
 }
 
 /* ── Liquid Glass ──────────────────────────────────────────────
-   Material translúcido: desenfoque para separar del fondo, saturación
-   para que el color de abajo siga vivo, y un filo especular arriba que
-   es lo que hace que se lea como vidrio y no como plástico opaco.
+   Material translúcido. Sobre fondo oscuro el vidrio se construye con
+   velos de blanco a muy baja opacidad: el desenfoque separa del fondo,
+   la saturación mantiene vivo el color de abajo, y el filo especular
+   de arriba es lo que hace que se lea como vidrio y no como una caja
+   gris. Las opacidades son bajas a propósito; pasarse aquí aplana todo.
    ────────────────────────────────────────────────────────────── */
 .vidrio {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, white 66%, transparent),
-    color-mix(in srgb, white 40%, transparent)
+    color-mix(in srgb, white 13%, transparent),
+    color-mix(in srgb, white 6%, transparent)
   );
-  backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-  border: 1px solid color-mix(in srgb, white 58%, transparent);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid color-mix(in srgb, white 14%, transparent);
   box-shadow:
-    inset 0 1px 0 0 color-mix(in srgb, white 80%, transparent),
-    inset 0 -1px 0 0 color-mix(in srgb, white 24%, transparent),
-    0 12px 32px -14px rgba(32, 22, 66, 0.42);
+    inset 0 1px 0 0 color-mix(in srgb, white 22%, transparent),
+    inset 0 -1px 0 0 color-mix(in srgb, white 6%, transparent),
+    0 16px 40px -16px rgba(0, 0, 0, 0.72);
 }
 
 /* Vidrio teñido: el bloque protagonista. Deja pasar el fondo pero manda color. */
 .vidrio-tinte {
   background: linear-gradient(
     170deg,
-    color-mix(in srgb, #8878b8 74%, transparent),
-    color-mix(in srgb, #5f4f92 82%, transparent)
+    color-mix(in srgb, #6a45b8 78%, transparent),
+    color-mix(in srgb, #33206b 86%, transparent)
   );
   backdrop-filter: blur(26px) saturate(170%);
   -webkit-backdrop-filter: blur(26px) saturate(170%);
-  border: 1px solid color-mix(in srgb, white 26%, transparent);
+  border: 1px solid color-mix(in srgb, white 18%, transparent);
   box-shadow:
-    inset 0 1px 0 0 color-mix(in srgb, white 40%, transparent),
-    0 18px 44px -18px rgba(28, 18, 62, 0.6);
+    inset 0 1px 0 0 color-mix(in srgb, white 28%, transparent),
+    0 22px 50px -20px rgba(0, 0, 0, 0.8);
 }
 
-/* Vidrio oscuro: la barra flotante, que debe destacar sobre todo lo demás. */
+/* Vidrio elevado: la barra flotante. En una interfaz oscura lo que flota
+   se aclara, no se oscurece: es la única forma de que despegue del fondo. */
 .vidrio-oscuro {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, #241b44 74%, transparent),
-    color-mix(in srgb, #171128 66%, transparent)
+    color-mix(in srgb, white 16%, transparent),
+    color-mix(in srgb, white 9%, transparent)
   );
-  backdrop-filter: blur(26px) saturate(180%);
-  -webkit-backdrop-filter: blur(26px) saturate(180%);
-  border: 1px solid color-mix(in srgb, white 16%, transparent);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid color-mix(in srgb, white 20%, transparent);
   box-shadow:
-    inset 0 1px 0 0 color-mix(in srgb, white 20%, transparent),
-    0 16px 40px -14px rgba(12, 8, 30, 0.62);
+    inset 0 1px 0 0 color-mix(in srgb, white 26%, transparent),
+    0 20px 46px -16px rgba(0, 0, 0, 0.85);
 }
 
-/* Vidrio fino: píldoras y controles pequeños, donde 22px de desenfoque
+/* Vidrio fino: píldoras y controles pequeños, donde 24px de desenfoque
    sería exagerado y costoso. */
 .vidrio-fino {
-  background: color-mix(in srgb, white 52%, transparent);
-  backdrop-filter: blur(14px) saturate(170%);
-  -webkit-backdrop-filter: blur(14px) saturate(170%);
-  border: 1px solid color-mix(in srgb, white 52%, transparent);
-  box-shadow: inset 0 1px 0 0 color-mix(in srgb, white 70%, transparent);
+  background: color-mix(in srgb, white 9%, transparent);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid color-mix(in srgb, white 14%, transparent);
+  box-shadow: inset 0 1px 0 0 color-mix(in srgb, white 18%, transparent);
 }
 
 /* Las tarjetas son contenido, no controles: llevan translucidez y filo, pero
    no desenfoque. Una lista larga con backdrop-filter en cada fila se arrastra
    en el iPhone y no aporta nada que el ojo note. */
 .vidrio-solido {
-  background: color-mix(in srgb, white 76%, transparent);
-  border: 1px solid color-mix(in srgb, white 62%, transparent);
+  background: color-mix(in srgb, white 7%, transparent);
+  border: 1px solid color-mix(in srgb, white 11%, transparent);
   box-shadow:
-    inset 0 1px 0 0 color-mix(in srgb, white 82%, transparent),
-    0 6px 18px -12px rgba(32, 22, 66, 0.34);
+    inset 0 1px 0 0 color-mix(in srgb, white 14%, transparent),
+    0 8px 22px -14px rgba(0, 0, 0, 0.7);
 }
 
 /* Responde al tacto, como el vidrio interactivo del sistema. */
@@ -174,13 +179,13 @@ body {
    con esferas subyacentes mediante gradientes radiales.
    ────────────────────────────────────────────────────────────── */
 .hero-card {
-  background-color: #6b5795;
-  background-image: 
-    radial-gradient(circle at 75% 130%, #7d6ba8 0%, #5d4a86 45%, transparent 45.2%),
-    radial-gradient(circle at 105% 85%, #7663a2 0%, #55437e 30%, transparent 30.2%);
-  box-shadow: 
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-    0 12px 30px -10px rgba(0, 0, 0, 0.4);
+  background-color: #3d2668;
+  background-image:
+    radial-gradient(circle at 75% 130%, #5c3d9c 0%, #35205e 45%, transparent 45.2%),
+    radial-gradient(circle at 105% 85%, #513391 0%, #2b1a52 30%, transparent 30.2%);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    0 20px 44px -16px rgba(0, 0, 0, 0.8);
   position: relative;
   overflow: hidden;
 }
@@ -189,13 +194,13 @@ body {
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .vidrio,
   .vidrio-fino {
-    background: color-mix(in srgb, white 92%, transparent);
+    background: #241639;
   }
   .vidrio-tinte {
-    background: #6d5f92;
+    background: #3d2668;
   }
   .vidrio-oscuro {
-    background: #1d1636;
+    background: #2c1c44;
   }
 }
 
@@ -205,17 +210,17 @@ body {
   .vidrio-fino {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: #f4f1fb;
+    background: #241639;
   }
   .vidrio-tinte {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: #6d5f92;
+    background: #3d2668;
   }
   .vidrio-oscuro {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: #1d1636;
+    background: #2c1c44;
   }
 }
 
@@ -243,8 +248,8 @@ body {
 /* El halo del bloque protagonista, como el brillo del referente. */
 .halo {
   background:
-    radial-gradient(120% 90% at 82% 8%, #b9addb 0%, transparent 58%),
-    radial-gradient(90% 70% at 8% 96%, #7f6fa8 0%, transparent 62%),
+    radial-gradient(120% 90% at 82% 8%, #6f4bb8 0%, transparent 58%),
+    radial-gradient(90% 70% at 8% 96%, #2b1a52 0%, transparent 62%),
     var(--color-realce);
 }
 
@@ -265,8 +270,8 @@ body {
   background:
     radial-gradient(60% 34% at 50% 41%, #3b2a73 0%, transparent 100%),
     radial-gradient(34% 20% at 43% 41%, rgba(107, 75, 214, 0.5) 0%, transparent 100%),
-    radial-gradient(120% 78% at 50% 41%, transparent 45%, #0b0817 100%),
-    #140f26;
+    radial-gradient(120% 78% at 50% 41%, transparent 45%, #0a0518 100%),
+    #140a23;
 }
 
 /* ── Pantalla de arranque ──────────────────────────────────────

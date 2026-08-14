@@ -44,7 +44,7 @@ export default function NodoPendiente({
       <div
         className={`flex items-start gap-3 rounded-tarjeta p-3.5 transition-colors ${
           hecho
-            ? "border border-white/40 bg-white/35"
+            ? "border border-white/[0.07] bg-white/[0.03]"
             : u === "vencido"
               ? "vidrio-solido !border-alerta/30 !bg-alerta/[0.09]"
               : "vidrio-solido"
@@ -128,8 +128,8 @@ export default function NodoPendiente({
             aria-label={hecho ? `Reabrir ${task.title}` : `Marcar ${task.title} como listo`}
             className={`grid size-9 place-items-center rounded-full border-2 transition-colors ${
               hecho
-                ? "border-listo bg-listo text-white"
-                : "border-tinta/20 text-transparent hover:border-listo hover:bg-listo/10 hover:text-listo/60"
+                ? "border-listo bg-listo text-lienzo"
+                : "border-white/20 text-transparent hover:border-listo hover:bg-listo/15 hover:text-listo/70"
             }`}
           >
             <Check className="size-4" strokeWidth={3} />

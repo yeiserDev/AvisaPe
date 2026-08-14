@@ -33,7 +33,7 @@ function traducir(mensaje: string): string {
 }
 
 const CAMPO =
-  "mt-1.5 w-full rounded-campo border border-white/70 bg-white/45 px-4 py-3 text-base text-tinta placeholder:text-humo/60 focus:border-senal focus:bg-white/80 focus:outline-none";
+  "mt-1.5 w-full rounded-campo border border-white/12 bg-white/[0.06] px-4 py-3 text-base text-tinta placeholder:text-humo/70 focus:border-senal focus:bg-white/[0.1] focus:outline-none";
 const ETIQUETA = "block text-[12px] font-semibold uppercase tracking-[0.1em] text-humo";
 
 type Props = {
@@ -137,7 +137,7 @@ export default function HojaDetalle({
         type="button"
         aria-label="Cerrar"
         onClick={onCerrar}
-        className="absolute inset-0 bg-tinta/40 backdrop-blur-md"
+        className="absolute inset-0 bg-black/60 backdrop-blur-md"
       />
 
       <motion.form
@@ -189,8 +189,8 @@ export default function HojaDetalle({
                 aria-pressed={kind === t}
                 className={`rounded-full px-4 py-2 text-[13px] font-medium transition-colors ${
                   kind === t
-                    ? "bg-tinta text-white"
-                    : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
+                    ? "bg-tinta text-lienzo"
+                    : "border border-white/12 bg-white/[0.05] text-humo hover:border-tinta/60 hover:text-tinta"
                 }`}
               >
                 {t}
@@ -198,7 +198,7 @@ export default function HojaDetalle({
             ))}
 
             {escribiendoTipo ? (
-              <span className="inline-flex items-center gap-1 rounded-full border border-senal bg-white/85 pl-4 pr-1.5">
+              <span className="inline-flex items-center gap-1 rounded-full border border-senal bg-white/10 pl-4 pr-1.5">
                 <input
                   value={tipoNuevo}
                   onChange={(e) => setTipoNuevo(e.target.value)}
@@ -250,7 +250,7 @@ export default function HojaDetalle({
                 className={`rounded-full px-4 py-2 text-[13px] font-medium transition-colors ${
                   leads.includes(l.value)
                     ? "bg-senal text-white"
-                    : "border border-white/70 bg-white/40 text-humo hover:border-senal hover:text-senal"
+                    : "border border-white/12 bg-white/[0.05] text-humo hover:border-senal hover:text-senal"
                 }`}
               >
                 {l.label}
@@ -272,8 +272,8 @@ export default function HojaDetalle({
                 aria-pressed={repeat === r.value}
                 className={`vidrio-toque rounded-full px-4 py-2 text-[13px] font-medium ${
                   repeat === r.value
-                    ? "bg-tinta text-white"
-                    : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
+                    ? "bg-tinta text-lienzo"
+                    : "border border-white/12 bg-white/[0.05] text-humo hover:border-tinta/60 hover:text-tinta"
                 }`}
               >
                 {r.label}

@@ -9,7 +9,9 @@ const destino = join(raiz, "public", "splash");
 const logoPath = join(raiz, "public", "avisape.png");
 
 // Tonos oscuros para encuadrar la imagen de Gengar
-const FONDO = "#11081e";
+// El mismo negro violáceo que el fondo de la app: al terminar el arranque no
+// hay salto de color.
+const FONDO = "#140a23";
 const CENTRO = "#582199";
 
 /** iPhones vigentes: puntos CSS, densidad y píxeles reales. */
