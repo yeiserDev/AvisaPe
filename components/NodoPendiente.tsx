@@ -35,12 +35,12 @@ export default function NodoPendiente({
   return (
     <li className="entrada">
       <div
-        className={`flex items-start gap-3 rounded-tarjeta border p-3.5 transition-colors ${
+        className={`flex items-start gap-3 rounded-tarjeta p-3.5 transition-colors ${
           hecho
-            ? "border-transparent bg-lienzo/60"
+            ? "border border-white/40 bg-white/35"
             : u === "vencido"
-              ? "border-alerta/25 bg-alerta/[0.06]"
-              : "border-transparent bg-white"
+              ? "vidrio-solido !border-alerta/30 !bg-alerta/[0.09]"
+              : "vidrio-solido"
         }`}
       >
         {/* Hora y cuánto falta */}
@@ -70,11 +70,11 @@ export default function NodoPendiente({
           </p>
 
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-humo">
-            <span className="rounded-full bg-lienzo px-2 py-0.5 font-medium">
+            <span className="rounded-full bg-tinta/[0.07] px-2 py-0.5 font-medium">
               {task.kind}
             </span>
             {task.repeat && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-lienzo px-2 py-0.5">
+              <span className="inline-flex items-center gap-1 rounded-full bg-tinta/[0.07] px-2 py-0.5">
                 <Repeat2 className="size-3" />
                 {task.repeat}
               </span>
@@ -96,7 +96,7 @@ export default function NodoPendiente({
               onClick={() => onPosponer(task)}
               aria-label={`Posponer ${task.title} 10 minutos`}
               title="Posponer 10 min"
-              className="grid size-9 place-items-center rounded-full text-humo transition-colors hover:bg-lienzo hover:text-tinta"
+              className="grid size-9 place-items-center rounded-full text-humo transition-colors hover:bg-tinta/[0.07] hover:text-tinta"
             >
               <Clock3 className="size-[18px]" />
             </button>
@@ -108,7 +108,7 @@ export default function NodoPendiente({
               onClick={() => onBorrar(task)}
               aria-label={`Borrar ${task.title}`}
               title="Borrar"
-              className="grid size-9 place-items-center rounded-full text-humo transition-colors hover:bg-lienzo hover:text-alerta"
+              className="grid size-9 place-items-center rounded-full text-humo transition-colors hover:bg-tinta/[0.07] hover:text-alerta"
             >
               <Trash2 className="size-[18px]" />
             </button>
@@ -122,7 +122,7 @@ export default function NodoPendiente({
             className={`grid size-9 place-items-center rounded-full border-2 transition-colors ${
               hecho
                 ? "border-listo bg-listo text-white"
-                : "border-borde text-transparent hover:border-listo hover:text-listo/50"
+                : "border-tinta/20 text-transparent hover:border-listo hover:bg-listo/10 hover:text-listo/60"
             }`}
           >
             <Check className="size-4" strokeWidth={3} />

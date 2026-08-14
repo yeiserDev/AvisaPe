@@ -49,6 +49,137 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* El lienzo sobre el que se apoya todo. El vidrio no tiene nada que hacer
+   sobre un color plano: necesita variación detrás para refractar algo. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(58% 42% at 10% 6%, #cec2ec 0%, transparent 62%),
+    radial-gradient(48% 38% at 90% 10%, #a795de 0%, transparent 64%),
+    radial-gradient(66% 48% at 82% 90%, #8f7ec6 0%, transparent 62%),
+    radial-gradient(54% 44% at 14% 94%, #ded6f4 0%, transparent 60%),
+    linear-gradient(158deg, #f0ecfa 0%, #ded5f2 46%, #cabee7 100%);
+}
+
+/* ── Liquid Glass ──────────────────────────────────────────────
+   Material translúcido: desenfoque para separar del fondo, saturación
+   para que el color de abajo siga vivo, y un filo especular arriba que
+   es lo que hace que se lea como vidrio y no como plástico opaco.
+   ────────────────────────────────────────────────────────────── */
+.vidrio {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, white 66%, transparent),
+    color-mix(in srgb, white 40%, transparent)
+  );
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid color-mix(in srgb, white 58%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, white 80%, transparent),
+    inset 0 -1px 0 0 color-mix(in srgb, white 24%, transparent),
+    0 12px 32px -14px rgba(32, 22, 66, 0.42);
+}
+
+/* Vidrio teñido: el bloque protagonista. Deja pasar el fondo pero manda color. */
+.vidrio-tinte {
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, #8878b8 74%, transparent),
+    color-mix(in srgb, #5f4f92 82%, transparent)
+  );
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  border: 1px solid color-mix(in srgb, white 26%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, white 40%, transparent),
+    0 18px 44px -18px rgba(28, 18, 62, 0.6);
+}
+
+/* Vidrio oscuro: la barra flotante, que debe destacar sobre todo lo demás. */
+.vidrio-oscuro {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #241b44 74%, transparent),
+    color-mix(in srgb, #171128 66%, transparent)
+  );
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  border: 1px solid color-mix(in srgb, white 16%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, white 20%, transparent),
+    0 16px 40px -14px rgba(12, 8, 30, 0.62);
+}
+
+/* Vidrio fino: píldoras y controles pequeños, donde 22px de desenfoque
+   sería exagerado y costoso. */
+.vidrio-fino {
+  background: color-mix(in srgb, white 52%, transparent);
+  backdrop-filter: blur(14px) saturate(170%);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  border: 1px solid color-mix(in srgb, white 52%, transparent);
+  box-shadow: inset 0 1px 0 0 color-mix(in srgb, white 70%, transparent);
+}
+
+/* Las tarjetas son contenido, no controles: llevan translucidez y filo, pero
+   no desenfoque. Una lista larga con backdrop-filter en cada fila se arrastra
+   en el iPhone y no aporta nada que el ojo note. */
+.vidrio-solido {
+  background: color-mix(in srgb, white 76%, transparent);
+  border: 1px solid color-mix(in srgb, white 62%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, white 82%, transparent),
+    0 6px 18px -12px rgba(32, 22, 66, 0.34);
+}
+
+/* Responde al tacto, como el vidrio interactivo del sistema. */
+.vidrio-toque {
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.8, 0.3, 1),
+    filter 0.18s ease;
+}
+.vidrio-toque:active {
+  transform: scale(0.975);
+  filter: brightness(1.07) saturate(1.05);
+}
+
+/* Sin soporte de desenfoque, el vidrio se vuelve opaco en vez de ilegible. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidrio,
+  .vidrio-fino {
+    background: color-mix(in srgb, white 92%, transparent);
+  }
+  .vidrio-tinte {
+    background: #6d5f92;
+  }
+  .vidrio-oscuro {
+    background: #1d1636;
+  }
+}
+
+/* Quien pide menos transparencia en iOS espera superficies sólidas. */
+@media (prefers-reduced-transparency: reduce) {
+  .vidrio,
+  .vidrio-fino {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: #f4f1fb;
+  }
+  .vidrio-tinte {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: #6d5f92;
+  }
+  .vidrio-oscuro {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: #1d1636;
+  }
+}
+
 /* Respeta el notch y la barra de gestos del iPhone. */
 .safe-top {
   padding-top: max(0.75rem, env(safe-area-inset-top));
@@ -93,6 +224,81 @@ body {
 }
 .entrada {
   animation: entrada 0.3s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+/* Medianoche lila: el mismo fondo que las imágenes de arranque de iOS, para
+   que el paso del splash del sistema a la app no se note. */
+.arranque-fondo {
+  background:
+    radial-gradient(60% 34% at 50% 41%, #3b2a73 0%, transparent 100%),
+    radial-gradient(34% 20% at 43% 41%, rgba(107, 75, 214, 0.5) 0%, transparent 100%),
+    radial-gradient(120% 78% at 50% 41%, transparent 45%, #0b0817 100%),
+    #140f26;
+}
+
+/* ── Pantalla de arranque ──────────────────────────────────────
+   El riel crece, aparecen los pendientes, la línea de ahora barre
+   hacia lo que falta y recién entonces entra el nombre.
+   ────────────────────────────────────────────────────────────── */
+@keyframes riel-crece {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes punto-entra {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes ahora-barre {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes marcador-late {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+@keyframes nombre-sube {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes arranque-se-va {
+  to { opacity: 0; transform: scale(1.04); }
+}
+
+.arranque-riel,
+.arranque-punto-1,
+.arranque-punto-2,
+.arranque-punto-3,
+.arranque-punto-4,
+.arranque-ahora,
+.arranque-halo,
+.arranque-marcador {
+  /* Cada figura gira sobre su propio centro dentro del SVG. */
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-fill-mode: both;
+}
+
+.arranque-riel { animation: riel-crece 0.5s cubic-bezier(0.2, 0.8, 0.3, 1); }
+.arranque-punto-1 { animation: punto-entra 0.3s ease-out 0.3s; }
+.arranque-punto-2 { animation: punto-entra 0.3s ease-out 0.37s; }
+.arranque-punto-3 { animation: punto-entra 0.3s ease-out 0.44s; }
+.arranque-punto-4 { animation: punto-entra 0.3s ease-out 0.51s; }
+
+.arranque-ahora {
+  /* Nace en el riel y avanza hacia la derecha, no desde el centro. */
+  transform-origin: left center;
+  animation: ahora-barre 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) 0.55s;
+}
+.arranque-marcador { animation: marcador-late 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) 0.5s; }
+.arranque-halo { animation: punto-entra 0.6s ease-out 0.58s; }
+
+.arranque-nombre { animation: nombre-sube 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 0.62s both; }
+.arranque-lema { animation: nombre-sube 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 0.74s both; }
+
+.arranque-sale {
+  animation: arranque-se-va 0.42s ease-in forwards;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

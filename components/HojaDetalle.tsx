@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import {
   LARGO_MAX_TIPO,
   LEAD_OPTIONS,
@@ -32,7 +32,7 @@ function traducir(mensaje: string): string {
 }
 
 const CAMPO =
-  "mt-1.5 w-full rounded-campo border border-borde bg-lienzo/60 px-4 py-3 text-base text-tinta placeholder:text-humo/60 focus:border-senal focus:bg-white focus:outline-none";
+  "mt-1.5 w-full rounded-campo border border-white/70 bg-white/45 px-4 py-3 text-base text-tinta placeholder:text-humo/60 focus:border-senal focus:bg-white/80 focus:outline-none";
 const ETIQUETA = "block text-[12px] font-semibold uppercase tracking-[0.1em] text-humo";
 
 type Props = {
@@ -63,6 +63,7 @@ export default function HojaDetalle({
   const [repeat, setRepeat] = useState<Repeat | "">(task?.repeat ?? "");
   const [tipoNuevo, setTipoNuevo] = useState("");
   const [escribiendoTipo, setEscribiendoTipo] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -129,12 +130,12 @@ export default function HojaDetalle({
         type="button"
         aria-label="Cerrar"
         onClick={onCerrar}
-        className="absolute inset-0 bg-tinta/45 backdrop-blur-sm"
+        className="absolute inset-0 bg-tinta/40 backdrop-blur-md"
       />
 
       <form
         onSubmit={guardar}
-        className="entrada safe-bottom relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-bloque bg-panel p-6 sm:rounded-bloque"
+        className="vidrio entrada safe-bottom relative max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-bloque p-6 sm:rounded-bloque"
       >
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-display text-2xl font-bold tracking-tight">
@@ -144,7 +145,7 @@ export default function HojaDetalle({
             type="button"
             onClick={onCerrar}
             aria-label="Cerrar"
-            className="grid size-9 place-items-center rounded-full bg-lienzo text-humo transition-colors hover:bg-borde hover:text-tinta"
+            className="vidrio-toque grid size-9 place-items-center rounded-full bg-tinta/[0.07] text-humo transition-colors hover:bg-tinta/15 hover:text-tinta"
           >
             <X className="size-5" />
           </button>
@@ -177,7 +178,7 @@ export default function HojaDetalle({
                 className={`rounded-full px-4 py-2 text-[13px] font-medium transition-colors ${
                   kind === t
                     ? "bg-tinta text-white"
-                    : "border border-borde text-humo hover:border-tinta hover:text-tinta"
+                    : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
                 }`}
               >
                 {t}
@@ -185,7 +186,7 @@ export default function HojaDetalle({
             ))}
 
             {escribiendoTipo ? (
-              <span className="inline-flex items-center gap-1 rounded-full border border-senal bg-white pl-4 pr-1.5">
+              <span className="inline-flex items-center gap-1 rounded-full border border-senal bg-white/85 pl-4 pr-1.5">
                 <input
                   value={tipoNuevo}
                   onChange={(e) => setTipoNuevo(e.target.value)}
@@ -237,7 +238,7 @@ export default function HojaDetalle({
                 className={`rounded-full px-4 py-2 text-[13px] font-medium transition-colors ${
                   leads.includes(l.value)
                     ? "bg-senal text-white"
-                    : "border border-borde text-humo hover:border-senal hover:text-senal"
+                    : "border border-white/70 bg-white/40 text-humo hover:border-senal hover:text-senal"
                 }`}
               >
                 {l.label}
@@ -246,21 +247,28 @@ export default function HojaDetalle({
           </div>
         </fieldset>
 
-        <label className={`${ETIQUETA} mt-5`} htmlFor="repetir">
-          Se repite
-        </label>
-        <select
-          id="repetir"
-          value={repeat}
-          onChange={(e) => setRepeat(e.target.value as Repeat | "")}
-          className={CAMPO}
-        >
-          {REPEATS.map((r) => (
-            <option key={r.value} value={r.value}>
-              {r.label}
-            </option>
-          ))}
-        </select>
+        {/* Píldoras en vez de un <select>: el desplegable nativo lo dibuja el
+            sistema operativo y no hay forma de que combine con el resto. */}
+        <fieldset className="mt-5">
+          <legend className={ETIQUETA}>Se repite</legend>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {REPEATS.map((r) => (
+              <button
+                key={r.value}
+                type="button"
+                onClick={() => setRepeat(r.value)}
+                aria-pressed={repeat === r.value}
+                className={`vidrio-toque rounded-full px-4 py-2 text-[13px] font-medium ${
+                  repeat === r.value
+                    ? "bg-tinta text-white"
+                    : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
 
         <label className={`${ETIQUETA} mt-5`} htmlFor="notas">
           Nota <span className="font-normal normal-case tracking-normal">(opcional)</span>
@@ -280,28 +288,49 @@ export default function HojaDetalle({
           </p>
         )}
 
-        <div className="mt-6 flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={guardando}
-            className="flex-1 rounded-full bg-senal py-4 font-semibold text-white transition-opacity disabled:opacity-50"
-          >
-            {guardando ? "Guardando…" : task ? "Guardar cambios" : "Agregar pendiente"}
-          </button>
+        <button
+          type="submit"
+          disabled={guardando}
+          className="vidrio-toque mt-6 w-full rounded-full bg-senal py-4 font-semibold text-white shadow-[0_10px_26px_-10px_rgba(107,75,214,0.95)] disabled:opacity-50"
+        >
+          {guardando ? "Guardando…" : task ? "Guardar cambios" : "Agregar pendiente"}
+        </button>
 
-          {task && onBorrar && (
+        {/* Borrar pide confirmación en el mismo botón: es la única acción de
+            la app que no se puede deshacer. */}
+        {task && onBorrar && (
+          <>
             <button
               type="button"
               onClick={() => {
+                if (!confirmando) return setConfirmando(true);
                 onBorrar(task);
                 onCerrar();
               }}
-              className="rounded-full border border-borde px-5 py-4 text-sm font-medium text-humo hover:border-alerta hover:text-alerta"
+              className={`vidrio-toque mt-3 flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-semibold transition-colors ${
+                confirmando
+                  ? "bg-alerta text-white shadow-[0_10px_26px_-10px_rgba(168,72,15,0.9)]"
+                  : "border border-alerta/30 bg-alerta/[0.07] text-alerta hover:bg-alerta/15"
+              }`}
             >
-              Borrar
+              <Trash2 className="size-4" />
+              {confirmando ? "Sí, borrar este pendiente" : "Borrar pendiente"}
             </button>
-          )}
-        </div>
+
+            {confirmando && (
+              <p className="mt-2 text-center text-[12px] leading-snug text-humo">
+                Se borra para siempre, junto con sus avisos.{" "}
+                <button
+                  type="button"
+                  onClick={() => setConfirmando(false)}
+                  className="font-semibold text-tinta underline underline-offset-2"
+                >
+                  Mejor no
+                </button>
+              </p>
+            )}
+          </>
+        )}
       </form>
     </div>
   );

@@ -56,7 +56,7 @@ export default function SelectorHora({ valor, onCambio }: Props) {
   }
 
   return (
-    <div className="rounded-campo bg-lienzo/60 p-3">
+    <div className="rounded-campo border border-white/60 bg-white/40 p-3">
       <div className="flex items-center justify-center gap-2.5">
         <Rueda
           etiqueta="Hora"
@@ -101,7 +101,7 @@ export default function SelectorHora({ valor, onCambio }: Props) {
               className={`rounded-full px-3.5 py-1.5 font-mono text-[12px] font-bold transition-colors ${
                 tarde === t.pm
                   ? "bg-tinta text-white"
-                  : "border border-borde text-humo hover:border-tinta hover:text-tinta"
+                  : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
               }`}
             >
               {t.label}
@@ -162,7 +162,7 @@ function Rueda({
         }}
         inputMode="numeric"
         aria-label={etiqueta}
-        className="tnum w-14 rounded-lg border border-transparent bg-white py-1 text-center font-mono text-[28px] font-bold leading-tight text-tinta focus:border-senal focus:outline-none"
+        className="tnum w-14 rounded-lg border border-white/70 bg-white/75 py-1 text-center font-mono text-[28px] font-bold leading-tight text-tinta focus:border-senal focus:outline-none"
       />
 
       <button

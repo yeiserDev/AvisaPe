@@ -151,7 +151,7 @@ export default function AvisosGate() {
   }
 
   return (
-    <div className="mt-3 rounded-tarjeta bg-white p-4">
+    <div className="vidrio mt-3 rounded-tarjeta p-4">
       {estado === "instalar" && (
         <>
           <p className="flex items-center gap-2 font-display font-bold text-tinta">

@@ -99,7 +99,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
   const yaPaso = valor.getTime() < Date.now();
 
   return (
-    <div className="mt-1.5 rounded-campo border border-borde bg-white p-3">
+    <div className="mt-1.5 rounded-campo border border-white/70 bg-white/50 p-3">
       {/* Atajos de día */}
       <div className="sin-barra mb-3 flex gap-2 overflow-x-auto">
         {[
@@ -120,7 +120,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
               className={`shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors ${
                 activo
                   ? "bg-tinta text-white"
-                  : "border border-borde text-humo hover:border-tinta hover:text-tinta"
+                  : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
               }`}
             >
               {a.label}
@@ -139,7 +139,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
             type="button"
             onClick={() => moverMes(-1)}
             aria-label="Mes anterior"
-            className="grid size-8 place-items-center rounded-full text-humo transition-colors hover:bg-lienzo hover:text-tinta"
+            className="grid size-8 place-items-center rounded-full text-humo transition-colors hover:bg-tinta/[0.07] hover:text-tinta"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -147,7 +147,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
             type="button"
             onClick={() => moverMes(1)}
             aria-label="Mes siguiente"
-            className="grid size-8 place-items-center rounded-full text-humo transition-colors hover:bg-lienzo hover:text-tinta"
+            className="grid size-8 place-items-center rounded-full text-humo transition-colors hover:bg-tinta/[0.07] hover:text-tinta"
           >
             <ChevronRight className="size-4" />
           </button>
@@ -182,10 +182,10 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
                   elegido
                     ? "bg-senal font-bold text-white"
                     : esHoy
-                      ? "font-bold text-senal ring-1 ring-inset ring-senal/40 hover:bg-lienzo"
+                      ? "font-bold text-senal ring-1 ring-inset ring-senal/40 hover:bg-tinta/[0.07]"
                       : deOtroMes
-                        ? "text-humo/35 hover:bg-lienzo"
-                        : "text-tinta hover:bg-lienzo"
+                        ? "text-humo/35 hover:bg-tinta/[0.07]"
+                        : "text-tinta hover:bg-tinta/[0.07]"
                 }`}
               >
                 {d.getDate()}
@@ -196,7 +196,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
       </div>
 
       {/* Hora */}
-      <div className="mt-3 border-t border-borde pt-3">
+      <div className="mt-3 border-t border-white/70 pt-3">
         <SelectorHora valor={valor} onCambio={onCambio} />
 
         <div className="sin-barra mt-2.5 flex gap-1.5 overflow-x-auto">
@@ -209,7 +209,7 @@ export default function SelectorFecha({ valor, onCambio }: Props) {
               className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
                 aHoraTexto(valor) === h.valor
                   ? "bg-tinta text-white"
-                  : "border border-borde text-humo hover:border-tinta hover:text-tinta"
+                  : "border border-white/70 bg-white/40 text-humo hover:border-tinta hover:text-tinta"
               }`}
             >
               {h.label}

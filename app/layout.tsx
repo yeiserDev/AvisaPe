@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import Arranque from "@/components/Arranque";
+import { SPLASH_LINKS } from "@/lib/splash";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -33,6 +35,13 @@ export const metadata: Metadata = {
   icons: {
     icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+    // iOS exige un PNG por resolución exacta: sin el de tu modelo, muestra
+    // una pantalla en blanco al abrir la app. Se generan con `npm run splash`.
+    other: SPLASH_LINKS.map((s) => ({
+      rel: "apple-touch-startup-image",
+      url: s.url,
+      media: s.media,
+    })),
   },
   formatDetection: { telephone: false, date: false, address: false },
 };
@@ -52,7 +61,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="es"
       className={`${bricolage.variable} ${instrument.variable} ${jetbrains.variable}`}
     >
-      <body className="min-h-dvh antialiased">{children}</body>
+      <body className="min-h-dvh antialiased">
+        <Arranque />
+        {children}
+      </body>
     </html>
   );
 }

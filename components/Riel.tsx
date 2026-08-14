@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LogOut } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TIPO_POR_DEFECTO, type NewTask, type Task } from "@/lib/types";
 import {
@@ -240,7 +240,7 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
       <div className="mx-auto max-w-2xl pb-36">
         {/* ── Bloque protagonista ── */}
         <header className="safe-top px-3">
-          <div className="halo rounded-bloque px-6 pb-7 pt-5 text-white">
+          <div className="vidrio-tinte rounded-bloque px-6 pb-7 pt-5 text-white">
             <div className="flex items-center justify-between">
               <span className="rounded-full bg-white/20 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] backdrop-blur-sm">
                 AvisaPe
@@ -250,7 +250,7 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
                   type="submit"
                   title={`Salir de ${email}`}
                   aria-label={`Salir de ${email}`}
-                  className="grid size-9 place-items-center rounded-full bg-white/20 backdrop-blur-sm transition-colors hover:bg-white/30"
+                  className="vidrio-toque grid size-9 place-items-center rounded-full bg-white/20 backdrop-blur-sm transition-colors hover:bg-white/30"
                 >
                   <LogOut className="size-4" />
                 </button>
@@ -283,28 +283,30 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
 
         {/* ── Filtros ── */}
         {filtros.length > 2 && (
-          <div className="sin-barra mt-4 flex gap-2 overflow-x-auto px-3 pb-1">
-            {filtros.map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setFiltro(f)}
-                aria-pressed={filtro === f}
-                className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-medium transition-colors ${
-                  filtro === f
-                    ? "bg-tinta text-white"
-                    : "border border-borde bg-transparent text-humo hover:border-tinta hover:text-tinta"
-                }`}
-              >
-                {f === "todo" ? "Todo" : f}
-              </button>
-            ))}
+          <div className="sticky top-0 z-20 mt-4 px-3 py-1">
+            <div className="sin-barra flex gap-2 overflow-x-auto">
+              {filtros.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFiltro(f)}
+                  aria-pressed={filtro === f}
+                  className={`vidrio-toque shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold ${
+                    filtro === f
+                      ? "vidrio-oscuro text-white"
+                      : "vidrio-fino text-tinta/75"
+                  }`}
+                >
+                  {f === "todo" ? "Todo" : f}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         {/* ── Lista ── */}
         {grupos.length === 0 ? (
-          <div className="mx-3 mt-4 rounded-bloque bg-white px-6 py-12 text-center">
+          <div className="vidrio mx-3 mt-4 rounded-bloque px-6 py-12 text-center">
             <p className="font-display text-xl font-bold">
               {filtro === "todo" ? "Nada por delante" : "Nada de este tipo"}
             </p>
@@ -321,7 +323,7 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
                 <h2 className="font-display text-[22px] font-bold tracking-tight">
                   {grupo.etiqueta}
                 </h2>
-                <span className="tnum rounded-full bg-white px-2 py-0.5 font-mono text-[11px] text-humo">
+                <span className="vidrio-fino tnum rounded-full px-2.5 py-0.5 font-mono text-[11px] text-humo">
                   {grupo.items.length}
                 </span>
               </div>
@@ -354,9 +356,10 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
 
         {/* ── Cerrados ── */}
         {listos.length > 0 && (
-          <details className="mt-6 px-3">
-            <summary className="cursor-pointer list-none px-1 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-humo hover:text-tinta">
-              {listos.length} {listos.length === 1 ? "cerrado" : "cerrados"} ▾
+          <details className="group mt-6 px-3">
+            <summary className="vidrio-fino vidrio-toque flex cursor-pointer list-none items-center justify-center gap-2 rounded-full py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-humo [&::-webkit-details-marker]:hidden">
+              {listos.length} {listos.length === 1 ? "cerrado" : "cerrados"}
+              <ChevronDown className="size-3.5 transition-transform duration-200 group-open:rotate-180" />
             </summary>
             <ul className="mt-2 flex flex-col gap-2">
               {listos.map((task) => (
