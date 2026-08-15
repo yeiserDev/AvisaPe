@@ -23,7 +23,9 @@ export default function Arranque() {
           transition={{ duration: 0.8, ease: "easeInOut" }}
           aria-hidden
           role="presentation"
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#150a24]"
+          // No hay nada que tocar en el arranque, y mientras se desvanece
+          // seguiría interceptando toques: que los deje pasar siempre.
+          className="pointer-events-none fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#150a24]"
         >
           {/* Fondo luminoso pulsante */}
           <motion.div 

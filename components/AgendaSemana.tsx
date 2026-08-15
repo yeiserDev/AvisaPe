@@ -52,14 +52,24 @@ export default function AgendaSemana({ tasks, now, abierto, onCerrar, onAbrirTar
     }));
   }, [lunes, tasks, now]);
 
-  const carga = Math.max(1, ...semana.map((d) => d.items.length));
   const total = semana.reduce((s, d) => s + d.items.length, 0);
+
+  /** Tocar un día de la tira lo trae a la vista en la agenda de abajo. */
+  function irADia(i: number) {
+    document
+      .getElementById(`agenda-dia-${i}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   return (
     <motion.aside
       aria-hidden={!abierto}
-      initial={false}
-      animate={{ x: abierto ? "0%" : "104%" }}
+      // Con `initial` explícito el panel ya sale apartado en el HTML del
+      // servidor. Sin esto, entre el primer pintado y la hidratación el panel
+      // se dibuja en su sitio y tapa la pantalla entera: la app se ve bien
+      // pero no responde a ningún toque.
+      initial={{ x: "-104%" }}
+      animate={{ x: abierto ? "0%" : "-104%" }}
       transition={{ type: "spring", stiffness: 320, damping: 34 }}
       onTouchStart={(e) => {
         const t = e.touches[0];
@@ -72,10 +82,13 @@ export default function AgendaSemana({ tasks, now, abierto, onCerrar, onAbrirTar
         const t = e.changedTouches[0];
         const dx = t.clientX - p.x;
         const dy = t.clientY - p.y;
-        // Cerrar devolviendo el panel hacia la derecha.
-        if (dx > 80 && Math.abs(dx) > Math.abs(dy) * 2) onCerrar();
+        // Cerrar empujando el panel de vuelta hacia la izquierda.
+        if (dx < -80 && Math.abs(dx) > Math.abs(dy) * 2) onCerrar();
       }}
-      className="vidrio fixed inset-y-0 right-0 z-40 flex w-[86vw] max-w-md flex-col rounded-l-[2rem] shadow-[0_0_60px_-10px_rgba(0,0,0,0.9)]"
+      className={`vidrio fixed inset-y-0 left-0 z-40 flex w-[86vw] max-w-md flex-col rounded-r-[2rem] shadow-[0_0_60px_-10px_rgba(0,0,0,0.9)] ${
+        // Cerrado no debe existir para el dedo, pase lo que pase con la animación.
+        abierto ? "pointer-events-auto" : "pointer-events-none"
+      }`}
     >
       {/* Cabecera */}
       <div className="safe-top shrink-0 px-5 pb-4">
@@ -104,7 +117,7 @@ export default function AgendaSemana({ tasks, now, abierto, onCerrar, onAbrirTar
           </button>
 
           <div className="min-w-0 flex-1 text-center">
-            <p className="truncate font-display text-[17px] font-bold capitalize tracking-tight">
+            <p className="truncate font-display text-[17px] font-bold tracking-tight">
               {rangoSemana(lunes)}
             </p>
             <p className="mt-0.5 text-[12px] text-humo">
@@ -130,35 +143,57 @@ export default function AgendaSemana({ tasks, now, abierto, onCerrar, onAbrirTar
           </button>
         </div>
 
-        {/* Carga de la semana: dónde se te acumula el trabajo, de un vistazo. */}
-        <div className="mt-4 flex items-end gap-1.5">
-          {semana.map((d) => {
-            const alto = d.items.length === 0 ? 6 : 6 + (d.items.length / carga) * 34;
+        {/* La tira de la semana. Cada día es una columna tocable que lleva a su
+            sección; los puntos dicen cuánto tienes ese día sin que haya que
+            comparar alturas de barras contra nada. */}
+        <div className="mt-4 flex gap-1">
+          {semana.map((d, i) => {
             const { dia, numero } = diaCorto(d.fecha);
+            const cuantos = d.items.length;
 
             return (
-              <div key={d.fecha.toISOString()} className="flex flex-1 flex-col items-center gap-1.5">
-                <span
-                  className={`w-full rounded-full transition-all ${
-                    d.esHoy ? "bg-senal" : d.items.length ? "bg-white/25" : "bg-white/10"
-                  }`}
-                  style={{ height: `${alto}px` }}
-                />
-                <span
-                  className={`text-[10px] font-semibold uppercase ${
-                    d.esHoy ? "text-senal" : "text-humo"
-                  }`}
-                >
+              <button
+                key={d.fecha.toISOString()}
+                type="button"
+                onClick={() => irADia(i)}
+                aria-label={`${dia} ${numero}, ${cuantos} ${cuantos === 1 ? "pendiente" : "pendientes"}`}
+                className={`vidrio-toque flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 transition-colors ${
+                  d.esHoy
+                    ? "bg-senal text-lienzo"
+                    : cuantos
+                      ? "bg-white/[0.07] text-tinta"
+                      : "text-humo/50"
+                }`}
+              >
+                <span className="text-[9px] font-bold uppercase tracking-[0.06em] opacity-70">
                   {dia}
                 </span>
-                <span
-                  className={`tnum font-mono text-[11px] ${
-                    d.esHoy ? "font-bold text-tinta" : "text-humo/70"
-                  }`}
-                >
+                <span className="tnum font-mono text-[15px] font-bold leading-none">
                   {numero}
                 </span>
-              </div>
+
+                {/* Alto fijo aunque esté vacío: si no, las columnas bailan. */}
+                <span className="flex h-2 items-center justify-center gap-[3px]">
+                  {cuantos > 0 && cuantos <= 3 &&
+                    Array.from({ length: cuantos }).map((_, k) => (
+                      <span
+                        key={k}
+                        className={`size-1 rounded-full ${
+                          d.esHoy ? "bg-lienzo/70" : "bg-senal"
+                        }`}
+                      />
+                    ))}
+                  {cuantos > 3 && (
+                    <span
+                      className={`tnum font-mono text-[9px] font-bold ${
+                        d.esHoy ? "text-lienzo/80" : "text-senal"
+                      }`}
+                    >
+                      {cuantos}
+                    </span>
+                  )}
+                </span>
+              </button>
             );
           })}
         </div>
@@ -166,11 +201,15 @@ export default function AgendaSemana({ tasks, now, abierto, onCerrar, onAbrirTar
 
       {/* Agenda día por día */}
       <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-8">
-        {semana.map((d) => {
+        {semana.map((d, i) => {
           const { dia, numero } = diaCorto(d.fecha);
 
           return (
-            <section key={d.fecha.toISOString()} className="border-t border-white/[0.07] py-3">
+            <section
+              key={d.fecha.toISOString()}
+              id={`agenda-dia-${i}`}
+              className="scroll-mt-2 border-t border-white/[0.07] py-3"
+            >
               <div className="flex items-baseline gap-2">
                 <h3
                   className={`font-display text-[15px] font-bold tracking-tight ${

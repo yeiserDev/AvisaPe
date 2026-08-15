@@ -258,6 +258,9 @@ body {
   content: "";
   position: absolute;
   inset: 0;
+  /* Heredan de .velo, pero dejarlo explícito evita que un cambio futuro en el
+     padre convierta los velos en una pared invisible sobre la interfaz. */
+  pointer-events: none;
 }
 
 .velo::before {

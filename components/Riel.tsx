@@ -66,6 +66,36 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
     };
   }, [supabase, recargar]);
 
+  /*
+   * Con la semana abierta, el fondo no debe moverse.
+   *
+   * `overflow: hidden` en el body no basta en iOS: Safari sigue arrastrando la
+   * página. Hay que fijar el body y compensar la posición del scroll, guardando
+   * dónde estabas para devolverte ahí al cerrar.
+   */
+  useEffect(() => {
+    if (!agenda) return;
+
+    const y = window.scrollY;
+    const body = document.body;
+    const antes = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+    };
+
+    body.style.position = "fixed";
+    body.style.top = `-${y}px`;
+    body.style.width = "100%";
+
+    return () => {
+      body.style.position = antes.position;
+      body.style.top = antes.top;
+      body.style.width = antes.width;
+      window.scrollTo(0, y);
+    };
+  }, [agenda]);
+
   // Al volver a la app (desde el bloqueo, por ejemplo) los datos se refrescan.
   useEffect(() => {
     const alVolver = () => {
@@ -276,14 +306,16 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
     const decidido = Math.abs(dx) / duracion > 0.3 || Math.abs(dx) > 120;
     if (!horizontal || !decidido) return;
 
-    if (dx < -70) setAgenda(true);
-    else if (dx > 70) setAgenda(false);
+    // El panel vive a la izquierda, así que se descubre arrastrando el
+    // contenido hacia la derecha. El movimiento sigue al dedo.
+    if (dx > 70) setAgenda(true);
+    else if (dx < -70) setAgenda(false);
   }
 
   return (
     <>
       <motion.div
-        animate={{ x: agenda ? "-82%" : "0%" }}
+        animate={{ x: agenda ? "82%" : "0%" }}
         transition={{ type: "spring", stiffness: 320, damping: 34 }}
         onTouchStart={alEmpezarToque}
         onTouchEnd={alSoltarToque}
@@ -295,7 +327,9 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
         }}
         // Alto mínimo de pantalla: si no, con la lista corta el gesto no tenía
         // dónde empezar debajo del contenido.
-        className="mx-auto min-h-dvh max-w-2xl pb-36"
+        className={`mx-auto min-h-dvh max-w-2xl pb-36 transition-[filter] duration-300 ${
+          agenda ? "blur-[6px] brightness-75" : ""
+        }`}
       >
         {/* ── Bloque protagonista ── */}
         <header className="safe-top px-3">
@@ -334,7 +368,7 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
             <motion.div 
               animate={{ y: [0, -6, 0], rotateZ: [0, 1.5, -0.5, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -right-2 top-14 w-44 h-44 select-none pointer-events-none drop-shadow-[0_22px_35px_rgba(28,18,62,0.45)]"
+              className="absolute -right-5 top-12 w-36 h-36 select-none pointer-events-none drop-shadow-[0_22px_35px_rgba(28,18,62,0.45)]"
             >
               {/* Estrellas flotantes */}
               <motion.div animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ duration: 3, repeat: Infinity }} className="absolute top-0 left-5 text-white text-xl">✨</motion.div>
@@ -379,9 +413,11 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
               </motion.div>
             </motion.div>
 
-            <div className="relative z-10 mt-11 w-[70%]">
-              <p className="font-display text-xl font-bold tracking-tight text-white/95">
-                {proximo ? "Lo próximo, en" : vencidos.length ? "Tienes tareas atrasadas" : "Todo listo para hoy"}
+            {/* El ancho deja libre la columna donde vive la ilustración: sin
+                ese límite el titular se le mete encima. */}
+            <div className="relative z-10 mt-11 w-[58%]">
+              <p className="font-display text-xl font-bold leading-tight tracking-tight text-white/95">
+                {proximo ? "Lo próximo, en" : vencidos.length ? "Atrasadas" : "Todo listo"}
               </p>
               <h1 className="mt-1 font-display text-[3.2rem] font-bold leading-none tracking-tight">
                 {proximo ? faltan(new Date(proximo.due_at), now).replace("en ", "") : vencidos.length ? `${vencidos.length}` : "—"}
@@ -537,7 +573,7 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
           onClick={() => setAgenda(true)}
           aria-label="Ver la semana"
           title="Ver la semana"
-          className="fixed right-0 top-1/2 z-20 -translate-y-1/2 py-8 pl-3 pr-1.5"
+          className="fixed left-0 top-1/2 z-20 -translate-y-1/2 py-8 pl-1.5 pr-3"
         >
           <span className="block h-14 w-[3px] rounded-full bg-white/30" />
         </button>
