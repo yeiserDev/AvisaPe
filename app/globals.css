@@ -192,13 +192,15 @@ body {
    con esferas subyacentes mediante gradientes radiales.
    ────────────────────────────────────────────────────────────── */
 .hero-card {
-  background-color: #3d2668;
-  background-image:
-    radial-gradient(circle at 75% 130%, #5c3d9c 0%, #35205e 45%, transparent 45.2%),
-    radial-gradient(circle at 105% 85%, #513391 0%, #2b1a52 30%, transparent 30.2%);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
-    0 20px 44px -16px rgba(0, 0, 0, 0.8);
+  background-color: #2a1a4a;
+  background-image: 
+    radial-gradient(circle at 80% -20%, #623ca3 0%, transparent 55%),
+    radial-gradient(circle at 10% 110%, #150d24 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, #462875 0%, transparent 70%);
+  box-shadow: 
+    inset 0 2px 3px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -4px 12px 0 rgba(0, 0, 0, 0.4),
+    0 24px 40px -12px rgba(18, 11, 36, 0.6);
   position: relative;
   overflow: hidden;
 }

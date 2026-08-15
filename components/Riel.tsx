@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CalendarDays, ChevronDown, LogOut, Utensils, Briefcase, HeartPulse, Wallet, Bell, User, Clock, CheckSquare, ListTodo, Check } from "lucide-react";
+import { CalendarDays, ChevronDown, LogOut, Utensils, Briefcase, HeartPulse, Wallet, Bell, User, Clock, CheckSquare, ListTodo } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { TIPO_POR_DEFECTO, type NewTask, type Task } from "@/lib/types";
@@ -333,9 +333,12 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
       >
         {/* ── Bloque protagonista ── */}
         <header className="safe-top px-3">
-          <div className="hero-card rounded-[2rem] px-6 pb-7 pt-6 text-white">
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-white/10 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
+          <div className="hero-card rounded-[2.5rem] px-6 pb-8 pt-7 text-white ring-1 ring-white/5">
+            {/* Resplandor de cristal interno */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-80" />
+            
+            <div className="relative z-20 flex items-center justify-between">
+              <span className="rounded-full bg-white/10 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-white/90 shadow-inner backdrop-blur-md">
                 AvisaPe
               </span>
               <div className="relative z-20 flex items-center gap-2">
@@ -346,9 +349,9 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
                   onClick={() => setAgenda(true)}
                   title="Ver la semana"
                   aria-label="Ver la semana"
-                  className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
+                  className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 backdrop-blur-md transition-colors hover:bg-white/20 shadow-inner"
                 >
-                  <CalendarDays className="size-[18px] text-white/80" />
+                  <CalendarDays className="size-[18px] text-white/90" />
                 </button>
 
                 <form action="/auth/salir" method="post">
@@ -356,66 +359,36 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
                     type="submit"
                     title={`Salir de ${email}`}
                     aria-label={`Salir de ${email}`}
-                    className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
+                    className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 backdrop-blur-md transition-colors hover:bg-white/20 shadow-inner"
                   >
-                    <LogOut className="size-[18px] text-white/80" />
+                    <LogOut className="size-[18px] text-white/90" />
                   </button>
                 </form>
               </div>
             </div>
 
-            {/* Calendario 3D Ultra-Premium */}
-            <motion.div 
-              animate={{ y: [0, -6, 0], rotateZ: [0, 1.5, -0.5, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -right-5 top-12 w-36 h-36 select-none pointer-events-none drop-shadow-[0_22px_35px_rgba(28,18,62,0.45)]"
-            >
-              {/* Estrellas flotantes */}
-              <motion.div animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ duration: 3, repeat: Infinity }} className="absolute top-0 left-5 text-white text-xl">✨</motion.div>
-              <motion.div animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.7, 1.1, 0.7] }} transition={{ duration: 4, repeat: Infinity, delay: 1 }} className="absolute top-7 right-4 text-white text-sm">✨</motion.div>
+            {/* La mascota (Gengar Fantasma) */}
+            <div className="pointer-events-none absolute -bottom-6 -right-5 w-[65%] max-w-[17rem] select-none">
               
-              {/* Cuerpo principal del calendario con extrusión 3D simulada */}
-              <div className="absolute inset-4 rounded-[1.8rem] bg-gradient-to-br from-[#d4c3ff] via-[#a387f0] to-[#7656d4] p-[1.5px] shadow-[inset_0_4px_12px_rgba(255,255,255,0.8),inset_0_-8px_16px_rgba(0,0,0,0.15),0_15px_25px_rgba(0,0,0,0.1)]">
-                {/* Textura frontal y cristal */}
-                <div className="w-full h-full rounded-[1.8rem] bg-gradient-to-b from-white/30 to-transparent flex flex-col overflow-hidden relative">
-                  
-                  {/* Brillo diagonal Liquid Glass */}
-                  <div className="absolute -inset-12 bg-gradient-to-tr from-transparent via-white/20 to-transparent rotate-45 transform translate-x-2 -translate-y-6"></div>
-                  
-                  {/* Cabecera / Pliegue superior */}
-                  <div className="h-[2.8rem] bg-white/20 border-b border-white/30 shadow-[0_3px_12px_rgba(0,0,0,0.06)] relative backdrop-blur-md">
-                    {/* Anillos metálicos 3D */}
-                    <div className="absolute -top-3.5 left-5 w-3.5 h-10 rounded-full bg-gradient-to-r from-[#f4f4f4] via-[#ffffff] to-[#b8b8b8] shadow-[inset_0_2px_4px_rgba(255,255,255,0.9),0_5px_8px_rgba(0,0,0,0.35)] border border-white/60">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent to-black/20 mix-blend-multiply"></div>
-                    </div>
-                    <div className="absolute -top-3.5 right-5 w-3.5 h-10 rounded-full bg-gradient-to-r from-[#f4f4f4] via-[#ffffff] to-[#b8b8b8] shadow-[inset_0_2px_4px_rgba(255,255,255,0.9),0_5px_8px_rgba(0,0,0,0.35)] border border-white/60">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent to-black/20 mix-blend-multiply"></div>
-                    </div>
-                  </div>
-
-                  {/* Detalle interno */}
-                  <div className="flex-1 flex items-center justify-center pb-2">
-                    <div className="w-[4.5rem] h-2.5 bg-white/25 rounded-full shadow-[inset_0_1px_3px_rgba(0,0,0,0.15)] mt-3"></div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Checkmark 3D Flotante con Parallax inverso */}
-              <motion.div 
-                animate={{ y: [0, 4, 0] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="absolute bottom-1 right-0 size-16 rounded-full bg-gradient-to-br from-[#e9e2ff] via-[#b6a0f5] to-[#886aeb] p-[1.5px] shadow-[inset_0_5px_10px_rgba(255,255,255,0.9),inset_0_-5px_10px_rgba(0,0,0,0.15),0_12px_28px_rgba(28,18,62,0.5)]"
-              >
-                <div className="w-full h-full rounded-full bg-gradient-to-b from-white/30 to-transparent flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/50 to-transparent rotate-45 transform translate-x-1 -translate-y-4"></div>
-                  <Check className="size-8 text-white drop-shadow-[0_3px_5px_rgba(0,0,0,0.25)]" strokeWidth={5} />
-                </div>
-              </motion.div>
-            </motion.div>
+              <motion.img
+                src="/avisape.png"
+                alt="Gengar AvisaPe"
+                aria-hidden
+                animate={{ y: [0, -6, 0], rotateZ: [0, 1.5, -0.5, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                // El mask-image borra los bordes duros de la imagen generada por IA 
+                // esfumando radialmente hacia transparente. ¡Así parece que Gengar sale de la niebla!
+                style={{
+                  WebkitMaskImage: "radial-gradient(circle at 45% 55%, black 40%, rgba(0,0,0,0.3) 65%, transparent 80%)",
+                  maskImage: "radial-gradient(circle at 45% 55%, black 40%, rgba(0,0,0,0.3) 65%, transparent 80%)",
+                }}
+                className="relative w-full drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
+              />
+            </div>
 
             {/* El ancho deja libre la columna donde vive la ilustración: sin
                 ese límite el titular se le mete encima. */}
-            <div className="relative z-10 mt-11 w-[58%]">
+            <div className="relative z-10 mt-11 w-[52%]">
               <p className="font-display text-xl font-bold leading-tight tracking-tight text-white/95">
                 {proximo ? "Lo próximo, en" : vencidos.length ? "Atrasadas" : "Todo listo"}
               </p>

@@ -14,6 +14,13 @@ function base64UrlABytes(base64: string): Uint8Array<ArrayBuffer> {
   return bytes;
 }
 
+/** Nada de "dispositivo(s)": el mensaje se escribe como se habla. */
+function resumenEnvio(entregados: number, dispositivos: number): string {
+  if (dispositivos === 1) return "Aviso enviado a este dispositivo";
+  if (entregados === dispositivos) return `Aviso enviado a tus ${dispositivos} dispositivos`;
+  return `Llegó a ${entregados} de ${dispositivos} dispositivos`;
+}
+
 type Estado =
   | "cargando"
   | "instalar" // iOS sin añadir a pantalla de inicio
@@ -25,6 +32,7 @@ type Estado =
 export default function AvisosGate() {
   const [estado, setEstado] = useState<Estado>("cargando");
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [fallo, setFallo] = useState(false);
   const [ocupado, setOcupado] = useState(false);
 
   const revisar = useCallback(async () => {
@@ -54,6 +62,14 @@ export default function AvisosGate() {
     const sub = await reg.pushManager.getSubscription();
     setEstado(sub ? "activo" : "pedir");
   }, []);
+
+  // La confirmación se retira sola: es un acuse, no un registro. Los errores
+  // se quedan, porque ahí sí hay algo que hacer.
+  useEffect(() => {
+    if (!mensaje || fallo) return;
+    const id = setTimeout(() => setMensaje(null), 5000);
+    return () => clearTimeout(id);
+  }, [mensaje, fallo]);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -113,16 +129,15 @@ export default function AvisosGate() {
   async function probar() {
     setOcupado(true);
     setMensaje(null);
+    setFallo(false);
     try {
       const r = await fetch("/api/push/probar", { method: "POST" });
       const datos = await r.json();
-      setMensaje(
-        r.ok
-          ? `Aviso enviado a ${datos.entregados} de ${datos.dispositivos} dispositivo(s).`
-          : datos.error,
-      );
+      setMensaje(r.ok ? resumenEnvio(datos.entregados, datos.dispositivos) : datos.error);
+      setFallo(!r.ok);
     } catch (e) {
       setMensaje((e as Error).message);
+      setFallo(true);
     } finally {
       setOcupado(false);
     }
@@ -132,21 +147,30 @@ export default function AvisosGate() {
 
   if (estado === "activo") {
     return (
-      <p className="mt-3 px-1 text-[12px] text-humo">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full bg-listo" />
-          Avisos activos en este dispositivo
-        </span>
+      <div className="vidrio-fino mt-3 flex items-center gap-2.5 rounded-full py-1.5 pl-3.5 pr-1.5">
+        <span
+          className={`size-2 shrink-0 rounded-full ${
+            fallo ? "bg-alerta" : "bg-listo"
+          } ${ocupado ? "animate-pulse" : ""}`}
+        />
+
+        <p
+          className={`min-w-0 flex-1 truncate text-[12.5px] ${
+            fallo ? "text-alerta" : mensaje ? "text-listo" : "text-humo"
+          }`}
+        >
+          {ocupado ? "Enviando…" : (mensaje ?? "Avisos activos en este dispositivo")}
+        </p>
+
         <button
           type="button"
           onClick={probar}
           disabled={ocupado}
-          className="ml-2 font-medium text-senal underline underline-offset-2 disabled:opacity-50"
+          className="vidrio-toque shrink-0 rounded-full bg-senal/20 px-3.5 py-1.5 text-[12px] font-semibold text-senal disabled:opacity-50"
         >
-          Enviar prueba
+          Probar
         </button>
-        {mensaje && <span className="ml-2 text-listo">{mensaje}</span>}
-      </p>
+      </div>
     );
   }
 

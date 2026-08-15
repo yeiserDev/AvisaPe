@@ -10,6 +10,7 @@
     "lint": "next lint",
     "icons": "node scripts/generate-icons.mjs",
     "splash": "node scripts/generate-splash.mjs",
+    "mascota": "node scripts/preparar-mascota.mjs",
     "vapid": "node scripts/generate-vapid.mjs"
   },
   "dependencies": {
