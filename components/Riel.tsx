@@ -269,14 +269,15 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
     const dy = t.clientY - inicio.y;
     const duracion = Math.max(1, Date.now() - inicio.ms);
 
-    // Tres condiciones para no abrirlo por error: claramente horizontal,
-    // recorrido largo, y con intención (rápido, o muy largo si fue lento).
-    const horizontal = Math.abs(dx) > Math.abs(dy) * 2;
-    const rapido = Math.abs(dx) / duracion > 0.45;
-    if (!horizontal) return;
+    // Dos condiciones para no abrirlo por error: claramente horizontal, y con
+    // recorrido suficiente. Un gesto rápido cuenta antes que uno lento, pero
+    // si es largo también vale aunque haya sido pausado.
+    const horizontal = Math.abs(dx) > Math.abs(dy) * 1.5;
+    const decidido = Math.abs(dx) / duracion > 0.3 || Math.abs(dx) > 120;
+    if (!horizontal || !decidido) return;
 
-    if (dx < -90 && (rapido || dx < -170)) setAgenda(true);
-    else if (dx > 90 && (rapido || dx > 170)) setAgenda(false);
+    if (dx < -70) setAgenda(true);
+    else if (dx > 70) setAgenda(false);
   }
 
   return (
@@ -286,7 +287,15 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
         transition={{ type: "spring", stiffness: 320, damping: 34 }}
         onTouchStart={alEmpezarToque}
         onTouchEnd={alSoltarToque}
-        className="mx-auto max-w-2xl pb-36"
+        // iOS cancela el toque cuando decide que el gesto es suyo (scroll,
+        // volver atrás). Sin esto quedaría un inicio huérfano y el siguiente
+        // toque se mediría desde una posición vieja.
+        onTouchCancel={() => {
+          toque.current = null;
+        }}
+        // Alto mínimo de pantalla: si no, con la lista corta el gesto no tenía
+        // dónde empezar debajo del contenido.
+        className="mx-auto min-h-dvh max-w-2xl pb-36"
       >
         {/* ── Bloque protagonista ── */}
         <header className="safe-top px-3">
@@ -519,6 +528,20 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
           </details>
         )}
       </motion.div>
+
+      {/* Tirador del borde: un gesto que no se ve no existe. Marca que hay algo
+          a la derecha y además se puede tocar. */}
+      {!agenda && (
+        <button
+          type="button"
+          onClick={() => setAgenda(true)}
+          aria-label="Ver la semana"
+          title="Ver la semana"
+          className="fixed right-0 top-1/2 z-20 -translate-y-1/2 py-8 pl-3 pr-1.5"
+        >
+          <span className="block h-14 w-[3px] rounded-full bg-white/30" />
+        </button>
+      )}
 
       <AgendaSemana
         tasks={tasks}
