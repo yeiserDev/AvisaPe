@@ -333,12 +333,9 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
       >
         {/* ── Bloque protagonista ── */}
         <header className="safe-top px-3">
-          <div className="hero-card rounded-[2.5rem] px-6 pb-8 pt-7 text-white ring-1 ring-white/5">
-            {/* Resplandor de cristal interno */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-80" />
-            
-            <div className="relative z-20 flex items-center justify-between">
-              <span className="rounded-full bg-white/10 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-white/90 shadow-inner backdrop-blur-md">
+          <div className="hero-card rounded-[2rem] px-6 pb-7 pt-6 text-white">
+            <div className="flex items-center justify-between">
+              <span className="rounded-full bg-white/10 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
                 AvisaPe
               </span>
               <div className="relative z-20 flex items-center gap-2">
@@ -349,9 +346,9 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
                   onClick={() => setAgenda(true)}
                   title="Ver la semana"
                   aria-label="Ver la semana"
-                  className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 backdrop-blur-md transition-colors hover:bg-white/20 shadow-inner"
+                  className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                 >
-                  <CalendarDays className="size-[18px] text-white/90" />
+                  <CalendarDays className="size-[18px] text-white/80" />
                 </button>
 
                 <form action="/auth/salir" method="post">
@@ -359,30 +356,38 @@ export default function Riel({ inicial, email }: { inicial: Task[]; email: strin
                     type="submit"
                     title={`Salir de ${email}`}
                     aria-label={`Salir de ${email}`}
-                    className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 backdrop-blur-md transition-colors hover:bg-white/20 shadow-inner"
+                    className="vidrio-toque grid size-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                   >
-                    <LogOut className="size-[18px] text-white/90" />
+                    <LogOut className="size-[18px] text-white/80" />
                   </button>
                 </form>
               </div>
             </div>
 
-            {/* La mascota (Gengar Fantasma) */}
-            <div className="pointer-events-none absolute -bottom-6 -right-5 w-[65%] max-w-[17rem] select-none">
-              
+            {/* La mascota. Es el mismo dibujo del arranque y del ícono: la
+                app se presenta siempre con la misma cara. */}
+            <div className="pointer-events-none absolute -bottom-5 -right-5 w-[56%] max-w-[15rem] select-none">
+              {/* Resplandor detrás. La ilustración viene recortada de verdad,
+                  así que no hay ningún recuadro que camuflar: esto es solo
+                  presencia. */}
+              <div className="absolute -inset-[18%] rounded-full bg-senal/30 blur-3xl" />
+
               <motion.img
-                src="/avisape.png"
-                alt="Gengar AvisaPe"
-                aria-hidden
-                animate={{ y: [0, -6, 0], rotateZ: [0, 1.5, -0.5, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                // El mask-image borra los bordes duros de la imagen generada por IA 
-                // esfumando radialmente hacia transparente. ¡Así parece que Gengar sale de la niebla!
-                style={{
-                  WebkitMaskImage: "radial-gradient(circle at 45% 55%, black 40%, rgba(0,0,0,0.3) 65%, transparent 80%)",
-                  maskImage: "radial-gradient(circle at 45% 55%, black 40%, rgba(0,0,0,0.3) 65%, transparent 80%)",
+                // Se prefiere la versión recortada; si no está, cae al logo del
+                // arranque para que la tarjeta nunca quede con un hueco.
+                src="/mascota.png"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (!img.dataset.respaldo) {
+                    img.dataset.respaldo = "1";
+                    img.src = "/avisape.png";
+                  }
                 }}
-                className="relative w-full drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
+                alt=""
+                aria-hidden
+                animate={{ y: [0, -7, 0], rotateZ: [0, 1.2, -0.6, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                className="relative w-full drop-shadow-[0_18px_28px_rgba(10,5,24,0.7)]"
               />
             </div>
 
